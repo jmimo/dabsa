@@ -4,29 +4,18 @@ from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
 
-class Airspace(Base):
-    #__tablename__ = 'airspace'
-    id = Column(Integer, primary_key=True, sqlite_autoincrement=True)
+class Area(Base):
+    __tablename__ = 'area'
+    id = Column(Integer, primary_key=True)
     name = Column(String)
     type = Column(String)
     floor = Column(String)
     ceiling = Column(String)
-    points = relationship('Point')
+    entries = relationship('entry')
 
-class Terrain(Airspace):
-    __tablename__ = 'terrain'
-    topen = Column(String)
-    tclosed = Column(String)
-    pen = Column(String)
-    brush = Column(String)
-    
-
-class 
-
-class Point(Base):
-    __tabelname__ = 'point'
-    id = Column(Integer, primary_key=True, sqlite_autoincrement=True)
-    xcoord = Column(String)
-    ycoord = Column(String)
-    airspace_id = Column(Integer, ForeignKey('airspace.id'))
-
+class Entry(Base):
+    __tabelname__ = 'entry'
+    id = Column(Integer, primary_key=True)
+    value = Column(String)
+    index = Column(Integer)
+    airspace_id = Column(Integer, ForeignKey('area.id'))
