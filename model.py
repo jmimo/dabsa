@@ -1,36 +1,32 @@
-from sqlalchemy import Table, MetaData, Column, ForeignKey, Integer, String
-from sqlalchemy.orm import mapper
+from sqlalchemy import Table, Column, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship, backref
+from sqlalchemy.ext.declarative import declarative_base
 
-metadata = MetaData()
+Base = declarative_base()
 
-airpace = Table('airspace', metadata,
-		Column('id', Integer, primary_key=True, sqlite_autoincrement=True),
-		Column('name', String(255)),
-		Column('type', String(10)),
-		Column('low', String(20)),
-		Column('high', String(20))
-	)
+class Airspace(Base):
+    #__tablename__ = 'airspace'
+    id = Column(Integer, primary_key=True, sqlite_autoincrement=True)
+    name = Column(String)
+    type = Column(String)
+    floor = Column(String)
+    ceiling = Column(String)
+    points = relationship('Point')
 
-point = Table('point', metadata,
-		Column('id', Integer, primary_key=True, sqlite_autoincrement=True),
-		Column('xcord', String(20)),
-		Column('ycord', String(20)),
-		Column('airspace_id', Integer, ForeignKey('airspace.id'))
-	)
+class Terrain(Airspace):
+    __tablename__ = 'terrain'
+    topen = Column(String)
+    tclosed = Column(String)
+    pen = Column(String)
+    brush = Column(String)
+    
 
+class 
 
-class Airspace(object):
-    def __init__(self, name, type, low, high):
-        self.name = name
-        self.type = type
-        self.low = low
-        self.high = high
+class Point(Base):
+    __tabelname__ = 'point'
+    id = Column(Integer, primary_key=True, sqlite_autoincrement=True)
+    xcoord = Column(String)
+    ycoord = Column(String)
+    airspace_id = Column(Integer, ForeignKey('airspace.id'))
 
-
-class Point(object):
-    def __init__(self,xcord,ycord):
-        self.xcord = xcord
-        self.ycord = ycord
-
-mapper(Airspace, airspace, properties={'points' : relationship(Point, backref='airspace', order_by=point.id})
-mapper(Point,point)
