@@ -38,3 +38,4 @@ nosetests.xml
 # personal
 *~
 env
+.DS_Store
