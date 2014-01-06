@@ -7,10 +7,14 @@ def main():
     parser.add_argument('--file', required=True, help='Path to OpenAir File')
     arguments = parser.parse_args()
 
-    file = open(arguments.file,'r')
-    areas = OpenAirParser.parse(file)
-    print areas
-
+    areas = OpenAirParser.parse(arguments.file)
+    #for area in areas:
+    #    print area 
+    #    for entry in area.entries:
+    #        print entry
+    output = OpenAirParser.createHeader('dummydate',['CTR','R','P'])
+    output += OpenAirParser.marshal(areas)
+    print output
 
 if __name__ == "__main__":
     main()

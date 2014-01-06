@@ -11,11 +11,24 @@ class Area(Base):
     type = Column(String)
     floor = Column(String)
     ceiling = Column(String)
-    entries = relationship('entry')
+    entries = relationship('Entry')
+    
+    def __init__(self,type):
+        self.type = type
+
+    def __repr__(self):
+        return "[id:%s][name:%s][type:%s][floor:%s][ceiling:%s][entries:%s]" % (self.id,self.name,self.type,self.floor,self.ceiling,len(self.entries))
 
 class Entry(Base):
-    __tabelname__ = 'entry'
+    __tablename__ = 'entry'
     id = Column(Integer, primary_key=True)
     value = Column(String)
     index = Column(Integer)
     airspace_id = Column(Integer, ForeignKey('area.id'))
+
+    def __init__(self,index,value):
+        self.index = index
+        self.value = value
+
+    def __repr__(self):
+        return "[id:%s][index:%s][value:%s]" % (self.id,self.index,self.value)
