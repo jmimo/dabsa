@@ -34,9 +34,9 @@ def createHeader(date,types):
     output += '* Including:                                                                   *\n'
     for type in types:
         output += '*  %s*\n' % (type.ljust(76))
-    output += '*  And all per [%s] DABS activated Airspaces                                   *\n'
+    output += '*  And all DABS activated Airspaces as of: %s*\n' % (date.ljust(36))
     output += '*                                                                              *\n'
-    output +=  '*##############################################################################*\n'
+    output += '*##############################################################################*\n'
     return output
 
 def marshal(areas):

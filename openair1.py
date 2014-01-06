@@ -12,7 +12,7 @@ def main():
     #    print area 
     #    for entry in area.entries:
     #        print entry
-    output = OpenAirParser.createHeader('dummydate',['CTR','R','P'])
+    output = OpenAirParser.createHeader('06.01.2014',['CTR','R','P'])
     output += OpenAirParser.marshal(areas)
     print output
 
