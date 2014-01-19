@@ -30,6 +30,7 @@
     <ul class="nav navbar-nav">
       {% if navloc == 'home' %}<li class="active">{% else %}<li>{% endif %}<a href="/">Home</a></li>
       {% if navloc == 'import' %}<li class="active">{% else %}<li>{% endif %}<a href="/import">Import</a></li>
+      {% if navloc == 'map' %}<li class="active">{% else %}<li>{% endif %}<a href="/map">Map</a></li>
     </ul>
     <form class="navbar-form navbar-right" role="search" action="/search" method="post">
       <div class="form-group">
