@@ -1,5 +1,5 @@
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash
-from flask.ext.googlemaps import GoogleMaps, Map, Marker, Polygon
+from flask.ext.googlemaps import GoogleMaps, Map, Marker, Polygon, Circle
 
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
@@ -27,6 +27,8 @@ def importAirspaces():
 def map():
     googlemap = Map(center=Marker(dms2dec(46,59,48), dms2dec(8,22,58)), style='height:450px;width:800px;margin:0;')
 
+    googlemap.add_marker(dms2dec(46,59,48), dms2dec(8,22,58))
+
     polygon1 = Polygon()
     polygon1.add_marker(dms2dec(46,57,13), dms2dec(8,27,52))
     polygon1.add_marker(dms2dec(46,57,46), dms2dec(8,30,41))
@@ -46,6 +48,9 @@ def map():
     polygon2.add_marker(dms2dec(46,55,46),dms2dec(8,20,27))
     polygon2.add_marker(dms2dec(46,56,23),dms2dec(8,23,38))
     googlemap.add_polygon(polygon2)
+
+    circle = Circle(Marker(dms2dec(46,59,48), dms2dec(8,22,58)),100)
+    googlemap.add_circle(circle)
 
     return render_template('map.html', navloc='map', gmap=googlemap)
 
