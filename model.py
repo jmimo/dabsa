@@ -4,6 +4,11 @@ from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
 
+class DatabaseModel(object):
+    def __init__(self,db):
+        self.db = db
+        
+
 class Area(Base):
     __tablename__ = 'area'
     id = Column(Integer, primary_key=True)

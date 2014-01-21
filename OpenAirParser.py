@@ -3,7 +3,8 @@ import re
 from model import Area, Entry
 
 def parse(file):
-    pointer = open(file,'r')
+    #pointer = open(file,'r')
+    pointer = file
     rows = pointer.readlines()
     areas = []
     counter = 0
