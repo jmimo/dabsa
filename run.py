@@ -1,3 +1,3 @@
-from dabsa import app
+from web import app
 
 app.run(debug=True)

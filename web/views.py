@@ -1,8 +1,9 @@
-from web import app, OpenAirParser
+from web import app
 from flask import request, session, g, redirect, url_for, abort, render_template, flash
 from flask.ext.googlemaps import Map, Marker, Polygon, Circle
 
 from model import Area, Entry
+import openair
 
 @app.route('/')
 def welcome():
@@ -13,7 +14,7 @@ def importAirspaces():
     if request.method == 'POST':
         file = request.files['airspace'] 
 
-        areas = OpenAirParser.parse(file)
+        areas = openair.parse(file)
         for area in areas:
             db.session.add(area)
         db.session.commit()
