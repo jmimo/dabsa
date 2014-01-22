@@ -1,14 +1,8 @@
-from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash
-from flask.ext.googlemaps import GoogleMaps, Map, Marker, Polygon, Circle
+from web import app, OpenAirParser
+from flask import request, session, g, redirect, url_for, abort, render_template, flash
+from flask.ext.googlemaps import Map, Marker, Polygon, Circle
 
-app = Flask(__name__)
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
-
-GoogleMaps(app)
-
-app.config.update(dict(
-    DEBUG=True
-))
+from model import Area, Entry
 
 @app.route('/')
 def welcome():
@@ -17,8 +11,13 @@ def welcome():
 @app.route('/import', methods=['GET', 'POST'])
 def importAirspaces():
     if request.method == 'POST':
-        file = request.files['file'] 
-	processAirspaceFile(file)
+        file = request.files['airspace'] 
+
+        areas = OpenAirParser.parse(file)
+        for area in areas:
+            db.session.add(area)
+        db.session.commit()
+
 	return render_template('welcome.html', navloc='home')
     if request.method == 'GET':
         return render_template('import.html', navloc='import')

@@ -1,22 +1,15 @@
+from web import db
 from sqlalchemy import Table, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship, backref
-from sqlalchemy.ext.declarative import declarative_base
 
-Base = declarative_base()
-
-class DatabaseModel(object):
-    def __init__(self,db):
-        self.db = db
-        
-
-class Area(Base):
+class Area(db.Model):
     __tablename__ = 'area'
-    id = Column(Integer, primary_key=True)
-    name = Column(String)
-    type = Column(String)
-    floor = Column(String)
-    ceiling = Column(String)
-    entries = relationship('Entry')
+    id = db.Column(Integer, primary_key=True)
+    name = db.Column(String)
+    type = db.Column(String)
+    floor = db.Column(String)
+    ceiling = db.Column(String)
+    entries = db.relationship('Entry')
     
     def __init__(self,type):
         self.type = type
@@ -24,12 +17,12 @@ class Area(Base):
     def __repr__(self):
         return "[id:%s][name:%s][type:%s][floor:%s][ceiling:%s][entries:%s]" % (self.id,self.name,self.type,self.floor,self.ceiling,len(self.entries))
 
-class Entry(Base):
+class Entry(db.Model):
     __tablename__ = 'entry'
-    id = Column(Integer, primary_key=True)
-    value = Column(String)
-    index = Column(Integer)
-    airspace_id = Column(Integer, ForeignKey('area.id'))
+    id = db.Column(Integer, primary_key=True)
+    value = db.Column(String)
+    index = db.Column(Integer)
+    airspace_id = db.Column(Integer, ForeignKey('area.id'))
 
     def __init__(self,index,value):
         self.index = index
