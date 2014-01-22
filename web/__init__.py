@@ -10,4 +10,4 @@ db = SQLAlchemy(app)
 
 GoogleMaps(app)
 
-from web import views, model
+from web import views
