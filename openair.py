@@ -1,51 +1,32 @@
 import argparse
 import re
 import datetime
-from model import AirspaceType, AirspaceFile, Airspace, Point
+from model import AirspaceFile, Airspace, Point
 
-class AirspaceClass(object):
-    # generic
-    RESTRICTRED='R'
-    DANGER='Q'
-    PROHIBITED='P'
-    CLASS_A='A'
-    CLASS_B='B'
-    CLASS_C='C'
-    CLASS_D='D'
-    GLIDER_PROHIBITED='GP'
-    CTR='CTR'
-    WAVE_WINDOW='W'
-    # flyland.ch specific
-    FLYING_FIELD='FF'
-    HELIPORT='HP'
-    CABLECAR='BB'
-    OBSTACLE='HI'
-    LOCAL_DANGERZONE='GG'
-    WILDLIFE_PROTECTION='SZ'
-    FLIGHT_PROHIBITED='VZ'
+AIRSPACE_CLASSES = {
+    'R':'RESTRICTED',
+    'Q':'DANGER',
+    'P':'PROHIBITED',
+    'A':'CLASS_A',
+    'B':'CLASS_B',
+    'C':'CLASS_C',
+    'D':'CLASS_D',
+    'E':'CLASS_E',
+    'GP':'GLIDER_PROHIBITED',
+    'CTR':'CTR',
+    'W':'WAVE_WINDOW',
+    'FF':'FLYING_FIELD',
+    'HP':'HELIPORT',
+    'BB':'CABLECAR',
+    'HI':'OBSTACLE',
+    'GG':'LOCAL_DANGERZONE',
+    'SZ':'WILDLIFE_PROTECTION',
+    'VZ':'FLIGHT_PROHIBITED'
+}
 
-    def valueOf(classIdentifier):
-        return {
-            'R': RESTRICTED,
-            'Q': DANGER,
-            'P': PROHIBITED,
-            'A': CLASS_A,
-            'B': CLASS_B,
-            'C': CLASS_C,
-            'D': CLASS_D,
-            'GP': GLIDER_PROHIBITED,
-            'CTR': CTR,
-            'W': WAVE_WINDOW,
-            'FF': FLYING_FIELD,
-            'HP': HELIPORT,
-            'BB': CABLECAR,
-            'HI': OBSTACLE,
-            'GG': LOCAL_DANGERZONE,
-            'SZ': WILDLIFE_PROTECTION,
-            'VZ': FLIGHT_PROHIBITED
-        }[classIdentifier]         
-    
-def parse(filename,filefilepointer):
+AIRSPACE_CLASSES_REF = dict((v,k) for k,v in AIRSPACE_CLASSES.iteritems())
+
+def parse(filename,filepointer):
     rows = filepointer.readlines()
     airspaceFile = AirspaceFile(name=filename,importDate=datetime.datetime.now())
     counter = 0
@@ -54,21 +35,27 @@ def parse(filename,filefilepointer):
         bareline = line[3:].replace('\r\n','')
         if(re.match("^[A-Za-z]",identifier)):
             if identifier == 'AC':
-                airspace = Airspace(type=bareline)
-                airspacefile.airspaces.append(area)
+                airspace = Airspace(type=AIRSPACE_CLASSES[bareline])
+                airspaceFile.airspaces.append(airspace)
                 counter = 0
             elif identifier == 'AN':
-                area.name = bareline
+                airspace.name = bareline[3:]
             elif identifier == 'AH':
-                area.ceiling = bareline
+                airspace.ceiling = bareline[3:]
             elif identifier == 'AL':
-                area.floor = bareline
-            else:
-                entry = Entry(index=counter,value=line.replace('\r\n',''))
-                area.entries.append(entry)
-                counter += 1
-    return areas
-
+                airspace.floor = bareline[3:]
+            elif identifier == 'DP':
+               point = Point(index=counter)
+               point.longitude = bareline[:8]
+               point.latitude = bareline[11:20]
+               airspace.points.append(point)
+               counter += 1
+            #else:
+            #    entry = Entry(index=counter,value=line.replace('\r\n',''))
+            #    area.entries.append(entry)
+            #    counter += 1
+    return airspaceFile
+'''
 def createHeader(date,types):
     output =  '*##############################################################################*\n'
     output += '*                                                                              *\n'
@@ -89,4 +76,4 @@ def marshal(areas):
             output += '%s\n' % (entry.value)
         output += '*#############################################*\n'
     return output
-
+'''

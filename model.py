@@ -1,17 +1,5 @@
 from web import db
 
-class AirspaceType():
-    TYPE_POLYGON=0
-    TYPE_CIRCLE=1
-    TYPE_POLYLINE=2
-
-    def valueOf(typeString):
-        return {
-            '': TYPE_POLYGON,
-            '': TYPE_CIRCLE,
-            '': TYPE_POLYLINE
-        }[typeString]
-
 class AirspaceFile(db.Model):
     __tablename__ = "AirspaceFile"
     id = db.Column(db.Integer, primary_key=True)

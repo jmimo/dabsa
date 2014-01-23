@@ -2,7 +2,7 @@ from web import app, db
 from flask import request, session, g, redirect, url_for, abort, render_template, flash
 from flask.ext.googlemaps import Map, Marker, Polygon, Circle
 
-from model import Area, Entry
+from model import AirspaceFile, Airspace, Point
 import openair
 
 @app.route('/')
@@ -14,11 +14,10 @@ def importAirspaces():
     if request.method == 'POST':
         file = request.files['airspace'] 
 
-        areas = openair.parse(file)
-        for area in areas:
-            db.session.add(area)
+        airspaceFile = openair.parse(file.filename,file)
+        db.session.add(airspaceFile)
         db.session.commit()
-
+        
 	return render_template('welcome.html', navloc='home')
     if request.method == 'GET':
         return render_template('import.html', navloc='import')
