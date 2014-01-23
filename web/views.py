@@ -1,4 +1,4 @@
-from web import app
+from web import app, db
 from flask import request, session, g, redirect, url_for, abort, render_template, flash
 from flask.ext.googlemaps import Map, Marker, Polygon, Circle
 

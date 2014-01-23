@@ -8,7 +8,7 @@ class Area(db.Model):
     type = db.Column(db.String)
     floor = db.Column(db.String)
     ceiling = db.Column(db.String)
-    entries = db.relationship('Entry')
+    entries = db.relationship('Entry', backref='area')
     
     def __repr__(self):
        return "[id:%s][name:%s][type:%s][floor:%s][ceiling:%s][entries:%s]" % (self.id,self.name,self.type,self.floor,self.ceiling,len(self.entries))
@@ -19,7 +19,7 @@ class Entry(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String)
     index = db.Column(db.Integer)
-    area_id = db.Column(db.Integer, db.ForeignKey('area.id'))
+    area_id = db.Column(db.Integer, db.ForeignKey('Area.id'))
 
     def __repr__(self):
        return "[id:%s][index:%s][value:%s]" % (self.id,self.index,self.value)
