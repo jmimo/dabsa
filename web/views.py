@@ -28,6 +28,16 @@ def map():
 
     googlemap.add_marker(dms2dec(46,59,48), dms2dec(8,22,58))
 
+    airspaceFile = AirspaceFile.query.filter(AirspaceFile.name.like('Flyland-WinPilot-29379.txt')).all()
+    
+    for airspace in airspaceFile[0].airspaces:
+        if airspace.type == 'CTR':
+            polygon = Polygon()
+            for point in airspace.points:
+                polygon.add_marker(dms2dec(point.longitude[:2],point.longitude[3:5],point.longitude[6:]),dms2dec(point.latitude[:3],point.latitude[4:6],point.latitude[7:]))
+            googlemap.add_polygon(polygon)
+
+    '''
     polygon1 = Polygon()
     polygon1.add_marker(dms2dec(46,57,13), dms2dec(8,27,52))
     polygon1.add_marker(dms2dec(46,57,46), dms2dec(8,30,41))
@@ -50,6 +60,7 @@ def map():
 
     circle = Circle(Marker(dms2dec(46,59,48), dms2dec(8,22,58)),100)
     googlemap.add_circle(circle)
+    '''
 
     return render_template('map.html', navloc='map', gmap=googlemap)
 
