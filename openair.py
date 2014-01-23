@@ -3,6 +3,48 @@ import re
 import datetime
 from model import AirspaceType, AirspaceFile, Airspace, Point
 
+class AirspaceClass(object):
+    # generic
+    RESTRICTRED='R'
+    DANGER='Q'
+    PROHIBITED='P'
+    CLASS_A='A'
+    CLASS_B='B'
+    CLASS_C='C'
+    CLASS_D='D'
+    GLIDER_PROHIBITED='GP'
+    CTR='CTR'
+    WAVE_WINDOW='W'
+    # flyland.ch specific
+    FLYING_FIELD='FF'
+    HELIPORT='HP'
+    CABLECAR='BB'
+    OBSTACLE='HI'
+    LOCAL_DANGERZONE='GG'
+    WILDLIFE_PROTECTION='SZ'
+    FLIGHT_PROHIBITED='VZ'
+
+    def valueOf(classIdentifier):
+        return {
+            'R': RESTRICTED,
+            'Q': DANGER,
+            'P': PROHIBITED,
+            'A': CLASS_A,
+            'B': CLASS_B,
+            'C': CLASS_C,
+            'D': CLASS_D,
+            'GP': GLIDER_PROHIBITED,
+            'CTR': CTR,
+            'W': WAVE_WINDOW,
+            'FF': FLYING_FIELD,
+            'HP': HELIPORT,
+            'BB': CABLECAR,
+            'HI': OBSTACLE,
+            'GG': LOCAL_DANGERZONE,
+            'SZ': WILDLIFE_PROTECTION,
+            'VZ': FLIGHT_PROHIBITED
+        }[classIdentifier]         
+    
 def parse(filename,filefilepointer):
     rows = filepointer.readlines()
     airspaceFile = AirspaceFile(name=filename,importDate=datetime.datetime.now())
