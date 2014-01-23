@@ -1,20 +1,19 @@
 import argparse
 import re
-from model import Area, Entry
+import datetime
+from model import AirspaceType, AirspaceFile, Airspace, Point
 
-def parse(file):
-    #pointer = open(file,'r')
-    pointer = file
-    rows = pointer.readlines()
-    areas = []
+def parse(filename,filefilepointer):
+    rows = filepointer.readlines()
+    airspaceFile = AirspaceFile(name=filename,importDate=datetime.datetime.now())
     counter = 0
     for line in rows:
         identifier = line[:2]
         bareline = line[3:].replace('\r\n','')
         if(re.match("^[A-Za-z]",identifier)):
             if identifier == 'AC':
-                area = Area(type=bareline)
-                areas.append(area)
+                airspace = Airspace(type=bareline)
+                airspacefile.airspaces.append(area)
                 counter = 0
             elif identifier == 'AN':
                 area.name = bareline

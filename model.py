@@ -1,25 +1,48 @@
 from web import db
 
-class Area(db.Model):
-    __tablename__ = "Area"
-    #__table_args__ = {"useexisting": True}
+class AirspaceType():
+    TYPE_POLYGON=0
+    TYPE_CIRCLE=1
+    TYPE_POLYLINE=2
+
+    def valueOf(typeString):
+        return {
+            '': TYPE_POLYGON,
+            '': TYPE_CIRCLE,
+            '': TYPE_POLYLINE
+        }[typeString]
+
+class AirspaceFile(db.Model):
+    __tablename__ = "AirspaceFile"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String)
+    importDate = db.Column(db.DateTime)
+    airspaces = db.relationship('Airspace', backref='file')
+
+    def __repr__(self):
+        return "[id:%s][name:%s][importDate:%s][airspaces:%s]" & (self.id,self.name,self.importDate,len(self.airspaces))
+
+class Airspace(db.Model):
+    __tablename__ = "Airspace"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
     type = db.Column(db.String)
     floor = db.Column(db.String)
     ceiling = db.Column(db.String)
-    entries = db.relationship('Entry', backref='area')
+    file_id = db.Column(db.Integer, db.ForeignKey('AirspaceFile.id'))
+    points = db.relationship('Point', backref='airspace')
     
     def __repr__(self):
        return "[id:%s][name:%s][type:%s][floor:%s][ceiling:%s][entries:%s]" % (self.id,self.name,self.type,self.floor,self.ceiling,len(self.entries))
 
-class Entry(db.Model):
-    __tablename__ = "Entry"
-    #__table_args__ = {"useexisting": True}
+class Point(db.Model):
+    __tablename__ = "Point"
     id = db.Column(db.Integer, primary_key=True)
-    value = db.Column(db.String)
+    prefix = db.Column(db.String)
+    longitude = db.Column(db.String)
+    latitude = db.Column(db.String)
     index = db.Column(db.Integer)
-    area_id = db.Column(db.Integer, db.ForeignKey('Area.id'))
+    airspace_id = db.Column(db.Integer, db.ForeignKey('Airspace.id'))
 
     def __repr__(self):
-       return "[id:%s][index:%s][value:%s]" % (self.id,self.index,self.value)
+       return "[id:%s][index:%s][prefix:%s][longitude:%s][latitude:%s]" % (self.id,self.index,self.prefix,self.longitude,self.latitude)
