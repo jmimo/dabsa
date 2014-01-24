@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
+<div class="padded">
 <div class="row">
   <div class="col-lg-6">
     <form class="form-inline" method="POST" enctype="multipart/form-data" action="/import">
@@ -32,5 +33,6 @@
     </table>
   </div>
   {% endif %}
+</div>
 </div>
 {% endblock %}

@@ -8,9 +8,9 @@ import openair
 def importAirspaces():
     if request.method == 'POST':
         file = request.files['airspace'] 
-
-        airspaceFile = openair.parse(file.filename,file)
-        db.add(airspaceFile)
-        db.commit()
+        if file:
+            airspaceFile = openair.parse(file.filename,file)
+            db.add(airspaceFile)
+            db.commit()
         
     return render_template('import.html', navloc='import', files=AirspaceFile.query.all())
