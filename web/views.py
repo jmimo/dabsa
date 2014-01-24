@@ -18,13 +18,11 @@ def importAirspaces():
         db.session.add(airspaceFile)
         db.session.commit()
         
-	return render_template('welcome.html', navloc='home')
-    if request.method == 'GET':
-        return render_template('import.html', navloc='import')
-
+    return render_template('import.html', navloc='import', files=AirspaceFile.query.all())
+    
 @app.route('/map')
 def map():
-    googlemap = Map(center=Marker(dms2dec(46,59,48), dms2dec(8,22,58)), style='height:450px;width:800px;margin:0;')
+    googlemap = Map(center=Marker(dms2dec(46,59,48), dms2dec(8,22,58)), cls="google-map", zoom=8)
 
     googlemap.add_marker(dms2dec(46,59,48), dms2dec(8,22,58))
 

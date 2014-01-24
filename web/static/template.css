@@ -1,7 +1,22 @@
+html {
+  height: 100%;
+}
+
 body {
       padding-top: 50px;
+      height: 100%;
   }
   .starter-template {
         padding: 40px 15px;
           text-align: center;
+  }
+
+  .fill {
+    height: 100%;
+  }
+  
+  .google-map {
+    height: 100%;
+    min-height: 100%;
+    width: 100%;
   }
