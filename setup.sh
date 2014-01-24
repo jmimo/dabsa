@@ -4,4 +4,4 @@ rm -fR env
 
 virtualenv env
 . env/bin/activate
-pip install flask flask-sqlalchemy sqlalchemy-migrate
+pip install flask sqlalchemy
