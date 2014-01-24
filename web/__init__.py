@@ -1,15 +1,13 @@
 from flask import Flask
-from flask.ext.sqlalchemy import SQLAlchemy
-#from flask.ext.googlemaps import GoogleMaps
+from database import init_db
 from gmap import GoogleMaps
+
+init_db()
 
 app = Flask(__name__)
 
 app.config.from_object('config')
 
-db = SQLAlchemy(app)
-
 GoogleMaps(app)
 
 import views
-import model

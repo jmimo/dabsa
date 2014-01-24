@@ -9,6 +9,8 @@
             mapTypeId: google.maps.MapTypeId.{{gmap.maptype}}
         });
 
+        informationWindow = new google.maps.InfoWindow();
+
         {% if gmap.markers %}
           {% for marker in gmap.markers %}
             var marker_{{loop.index}} = new google.maps.Marker({
@@ -35,6 +37,14 @@
                 fillopacity: {{polygon.fillopacity}}
               })
               polygon_{{loop.index}}.setMap({{gmap.varname}})
+
+              google.maps.event.addListener(polygon_{{loop.index}}, 'click', 
+                function showPolygonInformation_{{loop.index}}(event) {
+                informationWindow.setContent('<b>{{polygon.airspace.description}}</b><br/><i>{{polygon.airspace.name}}</i><br/><ul><li>floor: {{polygon.airspace.floor}}</li><li>ceiling: {{polygon.airspace.ceiling}}</li></ul>');
+                  informationWindow.setPosition(event.latLng);
+                  informationWindow.open({{gmap.varname}});
+                }
+              )
           {% endfor %}
         {% endif %}
 
@@ -73,6 +83,6 @@
           extendMap({{ gmap.varname }});
         }
     }
-    
+
     google.maps.event.addDomListener(window, 'load', initialize_{{gmap.varname}});
 </script>

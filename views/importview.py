@@ -1,4 +1,5 @@
-from web import app, db
+from web import app
+from database import db
 from model import AirspaceFile
 from flask import request, render_template
 import openair
@@ -9,7 +10,7 @@ def importAirspaces():
         file = request.files['airspace'] 
 
         airspaceFile = openair.parse(file.filename,file)
-        db.session.add(airspaceFile)
-        db.session.commit()
+        db.add(airspaceFile)
+        db.commit()
         
     return render_template('import.html', navloc='import', files=AirspaceFile.query.all())

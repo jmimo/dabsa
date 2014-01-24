@@ -30,26 +30,28 @@ def parse(filename,filepointer):
     rows = filepointer.readlines()
     airspaceFile = AirspaceFile(name=filename,importDate=datetime.datetime.now())
     counter = 0
+    previousLine = ''
     for line in rows:
         identifier = line[:2]
         bareline = line[3:].replace('\r\n','')
         if(re.match("^[A-Za-z]",identifier)):
             if identifier == 'AC':
-                airspace = Airspace(type=AIRSPACE_CLASSES[bareline])
+                airspace = Airspace(type=AIRSPACE_CLASSES[bareline],description=previousLine[14:].replace('\r\n',''))
                 airspaceFile.airspaces.append(airspace)
                 counter = 0
             elif identifier == 'AN':
-                airspace.name = bareline[3:]
+                airspace.name = bareline
             elif identifier == 'AH':
-                airspace.ceiling = bareline[3:]
+                airspace.ceiling = bareline
             elif identifier == 'AL':
-                airspace.floor = bareline[3:]
+                airspace.floor = bareline
             elif identifier == 'DP':
                point = Point(index=counter)
                point.longitude = bareline[:8]
                point.latitude = bareline[11:20]
                airspace.points.append(point)
                counter += 1
+        previousLine = line
             #else:
             #    entry = Entry(index=counter,value=line.replace('\r\n',''))
             #    area.entries.append(entry)

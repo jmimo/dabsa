@@ -1,5 +1,5 @@
 from flask import render_template, Blueprint, Markup
-
+from model import Airspace
 
 class Map(object):
 
@@ -78,13 +78,18 @@ class GoogleMaps(object):
         app.register_blueprint(module)
         return module
 
+class Drawing(object):
+    def __init__(self, airspace):
+        self.airspace = airspace
+
 class Marker(object):
     def __init__(self, latitude, longitude):
         self.latitude = latitude
         self.longitude = longitude
 
-class Polygon(object):
-    def __init__(self, markers=None, strokecolor="#FF0000", strokeopacity=0.8, strokeweight=2, fillcolor="#FF0000", fillopacity=0.35):
+class Polygon(Drawing):
+    def __init__(self, airspace=None, markers=None, strokecolor="#FF0000", strokeopacity=0.8, strokeweight=2, fillcolor="#FF0000", fillopacity=0.35):
+        Drawing.__init__(self,airspace)
         self.markers = markers or []
         self.strokecolor = strokecolor
         self.strokeopacity = strokeopacity
@@ -95,8 +100,9 @@ class Polygon(object):
     def add_marker(self, latitude, longitude):
         self.markers.append(Marker(latitude, longitude))
 
-class Circle(object):
-    def __init__(self, center, radius, strokecolor="#FF0000", strokeopacity=0.8, strokeweight=2, fillcolor="#FF0000", fillopacity=0.35):
+class Circle(Drawing):
+    def __init__(self, center, radius, airspace=None, strokecolor="#FF0000", strokeopacity=0.8, strokeweight=2, fillcolor="#FF0000", fillopacity=0.35):
+        Drawing.__init__(self,airspace)
         self.center = center
         self.radius = radius
         self.strokecolor = strokecolor
@@ -105,6 +111,7 @@ class Circle(object):
         self.fillcolor = fillcolor
         self.fillopacity = fillopacity
 
-class Polyline(object):
-    def __init__(self, markers=None):
+class Polyline(Drawing):
+    def __init__(self, markers=None, airspace=None):
+        Drawing.__init__(self,airspace)
         self.markers = markers or []

@@ -2,7 +2,7 @@ import os
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-GOOGLEMAPS_KEY=''
+GOOGLEMAPS_KEY='AIzaSyCPQfNI1ipRDjfadDfDZXnj6JyMsXQLqW4'
 
 SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'dabsa.db')
 SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
