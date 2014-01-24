@@ -1,0 +1,78 @@
+<script src="http://maps.googleapis.com/maps/api/js?sensor=false" type="text/javascript"></script>
+
+<script type="text/javascript">
+    function initialize_{{ gmap.varname }}() {
+        var {{ gmap.varname }} = new google.maps.Map(
+            document.getElementById('{{ gmap.div }}'), {
+            center: new google.maps.LatLng({{gmap.center.latitude}}, {{gmap.center.longitude}}),
+            zoom: {{gmap.zoom}},
+            mapTypeId: google.maps.MapTypeId.{{gmap.maptype}}
+        });
+
+        {% if gmap.markers %}
+          {% for marker in gmap.markers %}
+            var marker_{{loop.index}} = new google.maps.Marker({
+              position: new google.maps.LatLng({{marker.latitude}},{{marker.longitude}}),
+              map: {{gmap.varname}}
+            })
+          {% endfor %}
+        {% endif %}
+
+        {% if gmap.polygons %}
+          {% for polygon in gmap.polygons %}
+            var polygon_{{loop.index}}
+            var polygonCoords_{{loop.index}} = [
+              {% for marker in polygon.markers %}
+                new google.maps.LatLng({{marker.latitude}},{{marker.longitude}}){%if not loop.last %},{% endif %}
+              {% endfor %}
+            ]
+              polygon_{{loop.index}} = new google.maps.Polygon({
+                paths: polygonCoords_{{loop.index}},
+                strokeColor: '{{polygon.strokecolor}}',
+                strokeOpacity: {{polygon.strokeopacity}},
+                strokeWeight: {{polygon.strokeweight}},
+                fillcolor: '{{polygon.fillcolor}}',
+                fillopacity: {{polygon.fillopacity}}
+              })
+              polygon_{{loop.index}}.setMap({{gmap.varname}})
+          {% endfor %}
+        {% endif %}
+
+	{% if gmap.circles %}
+	  {% for circle in gmap.circles %}
+            var circlePopulationOptions_{{loop.index}} = {
+              strokeColor: '{{ circle.strokecolor }}',
+              strokeOpacity: {{ circle.strokeopacity }},
+              strokeWeight: {{ circle.strokeweight }},
+              fillColor: '{{ circle.fillcolor }}',
+              fillOpacity: {{ circle.fillopacity }},
+              map: {{ gmap.varname }},
+              center: new google.maps.LatLng({{ circle.center.latitude }},{{ circle.center.longitude }}),
+              radius: {{ circle.radius }} 
+            }	
+           
+            circle_{{ loop.index }} = new google.maps.Circle(circlePopulationOptions_{{ loop.index }})
+          {% endfor %}
+	{% endif %}
+
+	{% if gmap.lines %}
+	  {% for line in gmap.lines %}
+            var lineCoords_{{loop.index}} = [
+	    {% for marker in line.markers %}
+                new google.maps.LatLng({{marker.latitude}},{{marker.longitude}}){%if not loop.last %},{% endif %}
+            {% endfor %}
+            ]
+            var line_{{loop.index}} = new google.maps.Polyline({
+              path: lineCoords_{{loop.index}},
+              map: {{gmap.varname}}
+            })
+	  {% endfor %}
+	{% endif %}
+
+        if(typeof window.extendMap == 'function') {
+          extendMap({{ gmap.varname }});
+        }
+    }
+    
+    google.maps.event.addDomListener(window, 'load', initialize_{{gmap.varname}});
+</script>

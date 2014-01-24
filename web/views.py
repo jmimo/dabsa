@@ -1,6 +1,7 @@
 from web import app, db
 from flask import request, session, g, redirect, url_for, abort, render_template, flash
-from flask.ext.googlemaps import Map, Marker, Polygon, Circle
+#from flask.ext.googlemaps import Map, Marker, Polygon, Circle
+from gmap import Map, Marker, Polygon, Circle
 
 from model import AirspaceFile, Airspace, Point
 import openair
