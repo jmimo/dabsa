@@ -24,7 +24,7 @@ class Map(object):
     def add_circle(self, circle):
         self.circles.append(circle)
 
-    def add_line(self, polyline):
+    def add_polyline(self, polyline):
         self.lines.append(polyline)
 
     def render(self, *args, **kwargs):
@@ -115,3 +115,6 @@ class Polyline(Drawing):
     def __init__(self, markers=None, airspace=None):
         Drawing.__init__(self,airspace)
         self.markers = markers or []
+
+    def add_marker(self, latitude, longitude):
+        self.markers.append(Marker(latitude,longitude))

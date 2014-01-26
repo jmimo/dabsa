@@ -10,4 +10,4 @@ def shutdown_database(exception=None):
 def welcome():
     return render_template('welcome.html', navloc='home')
 
-import importview, mapview
+import importview, mapview, selectionview

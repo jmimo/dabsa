@@ -1,5 +1,5 @@
 from database import Base
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, Float, String, DateTime, ForeignKey
 from sqlalchemy.orm import relationship, backref
 
 class AirspaceFile(Base):
@@ -31,7 +31,9 @@ class Point(Base):
     id = Column(Integer, primary_key=True)
     prefix = Column(String)
     longitude = Column(String)
+    longitude_dec = Column(Float)
     latitude = Column(String)
+    latitude_dec = Column(Float)
     index = Column(Integer)
     airspace_id = Column(Integer, ForeignKey('Airspace.id'))
 

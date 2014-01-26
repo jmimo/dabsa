@@ -47,16 +47,17 @@ def parse(filename,filepointer):
                 airspace.floor = bareline
             elif identifier == 'DP':
                point = Point(index=counter)
-               point.longitude = bareline[:8]
-               point.latitude = bareline[11:20]
+               point.latitude = bareline[:8]
+               point.latitude_dec = dms2dec(point.latitude[:2],point.latitude[3:5],point.latitude[6:])
+               point.longitude = bareline[11:20]
+               point.longitude_dec = dms2dec(point.longitude[:3],point.longitude[4:6],point.longitude[7:])
                airspace.points.append(point)
                counter += 1
         previousLine = line
-            #else:
-            #    entry = Entry(index=counter,value=line.replace('\r\n',''))
-            #    area.entries.append(entry)
-            #    counter += 1
     return airspaceFile
+
+def dms2dec(degrees, minutes, seconds):
+    return int(degrees) + (float(minutes)/60) + (float(seconds)/3600)
 '''
 def createHeader(date,types):
     output =  '*##############################################################################*\n'
