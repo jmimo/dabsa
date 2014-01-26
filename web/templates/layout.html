@@ -28,10 +28,20 @@
   <!-- Collect the nav links, forms, and other content for toggling -->
   <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
     <ul class="nav navbar-nav">
-      {% if navloc == 'home' %}<li class="active">{% else %}<li>{% endif %}<a href="/">Home</a></li>
+      {% if navloc == 'index' %}<li class="active">{% else %}<li>{% endif %}<a href="/">Home</a></li>
       {% if navloc == 'import' %}<li class="active">{% else %}<li>{% endif %}<a href="/import">Import</a></li>
       {% if navloc == 'selection' %}<li class="active">{% else %}<li>{% endif %}<a href="/selection">Area Selection</a></li>
       {% if navloc == 'map' %}<li class="active">{% else %}<li>{% endif %}<a href="/map">Map</a></li>
+      {% if files %}
+      <li class="dropdown">
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown">{% if selected_file %}{{selected_file.name}}{% else %}Select File{% endif %}<b class="caret"></b></a>
+         <ul class="dropdown-menu"> 
+           {% for file in files %}
+           <li><a href="{{request.path}}?airspacefileid={{file.id}}">{{file.name}}</a></li>
+           {% endfor %}
+         </ul>
+      </li>
+      {% endif %}
     </ul>
   </div><!-- /.navbar-collapse -->
 </nav>
@@ -43,9 +53,9 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://code.jquery.com/jquery.js"/>
-    <script src="{{url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"/>
-    <script src="{{url_for('static', filename='tablesorter/jquery.tablesorter.js') }}"/>
-    <script src="{{url_for('static', filename='tablesorter/tables.js') }}/>
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <script src="{{url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
+    <script src="{{url_for('static', filename='tablesorter/jquery.tablesorter.js') }}"></script>
+    <script src="{{url_for('static', filename='tablesorter/tables.js') }}"></script>
   </body>
 </html>

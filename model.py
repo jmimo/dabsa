@@ -9,8 +9,11 @@ class AirspaceFile(Base):
     importDate = Column(DateTime)
     airspaces = relationship('Airspace', backref='file')
 
-    def __repr__(self):
-        return "[id:%s][name:%s][importDate:%s][airspaces:%s]" & (self.id,self.name,self.importDate,len(self.airspaces))
+    def get_id(self):
+        return id
+
+    #def __repr__(self):
+    #    return "[id:%s][name:%s][importDate:%s][airspaces:%s]" % (self.id,self.name,self.importDate,len(self.airspaces))
 
 class Airspace(Base):
     __tablename__ = "Airspace"

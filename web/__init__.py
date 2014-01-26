@@ -6,6 +6,8 @@ init_db()
 
 app = Flask(__name__)
 
+app.secret_key = '#YWX\x8bQ\x19`SW\xbf\xf6i\xe0\x088\xfb\xb4|\xc1\xb7*9\xf0' 
+
 app.config.from_object('config')
 
 GoogleMaps(app)
