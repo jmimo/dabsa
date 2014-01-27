@@ -11,9 +11,6 @@ class ImportView(BaseView):
     def get_template_name(self):
         return 'import.html'
     
-    def get_navloc(self):
-        return 'import'
-
     def dispatch_request(self):
         if request.method == 'POST':
             importfile = request.files['airspace']

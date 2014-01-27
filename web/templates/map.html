@@ -4,34 +4,79 @@
   {{gmap.html}}
 </div>
 <script type="text/javascript">
+  var currentSelection;
+  var confirmWindow;
+
   function extendMap(map) {
-    var controlDiv = document.createElement('div');
-    controlDiv.style.padding = '5px';
+    var drawingManager = new google.maps.drawing.DrawingManager({
+        drawingMode: google.maps.drawing.OverlayType.POLYGON,
+        drawingControl: true,
+        drawingControlOptions: {
+          position: google.maps.ControlPosition.TOP_CENTER,
+          drawingModes: [google.maps.drawing.OverlayType.POLYGON]
+        },
+	polygonOptions: {
+	  draggable: true,
+	  editable: true,
+	  strokeColor: '#FF6600',
+	  strokeOpacity: 0.8,
+	  strokeWeight: 2,
+	  fillColor: '#FFCC00',
+	  fillOpacity: 0.35
+        } 
+    });
+    drawingManager.setMap(map);
 
-    // Set CSS for the control border.
-    var controlUI = document.createElement('div');
-    controlUI.style.backgroundColor = 'white';
-    controlUI.style.borderStyle = 'solid';
-    controlUI.style.borderWidth = '2px';
-    controlUI.style.cursor = 'pointer';
-    controlUI.style.textAlign = 'center';
-    controlUI.title = 'Airspaces';
-    controlDiv.appendChild(controlUI);
+    google.maps.event.addListener(drawingManager, 'polygoncomplete', function(polygon) {
+	google.maps.event.addListener(polygon, 'rightclick', function(event) {
+          currentSelection = polygon;
+          confirmWindow = new google.maps.InfoWindow({
+            content: '<b>Submit Selection</b><br/><button onclick="submitSearchArea()">Submit</button><button onclick="removeSelection()">Remove</button>'
+          });
+          confirmWindow.setPosition(event.latLng);
+ 	  confirmWindow.open(map);	   
+        });
+    });
 
-    // Set CSS for the control interior.
-    var controlText = document.createElement('div');
-    controlText.style.fontFamily = 'Arial,sans-serif';
-    controlText.style.fontSize = '12px';
-    controlText.style.paddingLeft = '4px';
-    controlText.style.paddingRight = '4px';
-    controlText.innerHTML = '<strong>Home</strong>';
-    controlUI.appendChild(controlText);
-  
-    controlDiv.index = 1;
-
-    map.controls[google.maps.ControlPosition.TOP_RIGHT].push(controlDiv);
   }
 
+  function removeSelection() {
+    if(currentSelection) {
+      currentSelection.setEditable(false);
+      currentSelection.setMap(null);
+      currentSelection = null;
+    }
+    confirmWindow.close();
+  }
+
+  function submitSearchArea() {
+    confirmWindow.close();
+    if(currentSelection) {
+      submitPolygonSelection(currentSelection);
+    }
+  }
+
+  function submitPolygonSelection(polygon) {
+    var form = document.createElement("form");
+    form.setAttribute("method","POST");
+    form.setAttribute("action","/map");
+    var amount = document.createElement("input");
+    amount.setAttribute("type","hidden");
+    amount.setAttribute("name","amount");
+    amount.setAttribute("value",polygon.getPath().getLength());
+    form.appendChild(amount);
+    polygon.getPath().forEach(function(latlng,i) {
+        var point = document.createElement("input");
+        point.setAttribute("type","hidden");
+        point.setAttribute("name","point_" + i);
+        point.setAttribute("value",latlng.lat() + ":" + latlng.lng());
+        form.appendChild(point);
+    });
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
+  }
 </script>
 {{gmap.js}}
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=drawing&sensor=false"></script>
 {% endblock %}
