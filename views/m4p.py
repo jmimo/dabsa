@@ -35,11 +35,11 @@ class MapView(BaseView):
             points.append((latlng[0],latlng[1]))
             counter += 1
         # TODO only load the relevant points based on the initial airspace type selection.
-        airspaces = gis.find_all_airpspaces_inside_selected_polygon(points=Point.query.all(),polypoints=points)
-        construct_model(googlemap,airspaces)
+        airspaces = gis.find_all_airspaces_inside_selected_polygon(points=Point.query.all(),polypoints=points)
+        self.construct_model(googlemap,airspaces)
 
 
-    def construct_model(googlemap,airspaces):
+    def construct_model(self,googlemap,airspaces):
         for airspace in airspaces:
             marker = []
             for point in airspace.points:
