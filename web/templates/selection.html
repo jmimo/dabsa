@@ -28,8 +28,8 @@
     drawingManager.setMap(map);
 
     google.maps.event.addListener(drawingManager, 'polygoncomplete', function(polygon) {
-        currentSelection = polygon;
 	google.maps.event.addListener(polygon, 'rightclick', function(event) {
+          currentSelection = polygon;
           confirmWindow = new google.maps.InfoWindow({
             content: '<b>Submit Selection</b><br/><button onclick="submitSearchArea()">Submit</button><button onclick="removeSelection()">Remove</button>'
           });
@@ -51,7 +51,9 @@
 
   function submitSearchArea() {
     confirmWindow.close();
-    submitPolygonSelection(currentSelection);
+    if(currentSelection) {
+      submitPolygonSelection(currentSelection);
+    }
   }
 
   function submitPolygonSelection(polygon) {
