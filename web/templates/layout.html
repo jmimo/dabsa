@@ -10,6 +10,7 @@
     <link href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}" rel="stylesheet"/>
     <link href="{{ url_for('static', filename='template.css') }}" rel="stylesheet"/>
     <link href="{{ url_for('static', filename='fontawesome/css/font-awesome.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='ladda/ladda-themeless.min.css') }}" rel="stylesheet">
   </head>
 
   <body>
@@ -30,7 +31,6 @@
     <ul class="nav navbar-nav">
       {% if request.path == '/' %}<li class="active">{% else %}<li>{% endif %}<a href="/">Home</a></li>
       {% if request.path == '/import' %}<li class="active">{% else %}<li>{% endif %}<a href="/import">Import</a></li>
-      {% if request.path == '/selection' %}<li class="active">{% else %}<li>{% endif %}<a href="/selection">Area Selection</a></li>
       {% if request.path == '/map' %}<li class="active">{% else %}<li>{% endif %}<a href="/map">Map</a></li>
       {% if files %}
       <li class="dropdown">
@@ -57,5 +57,8 @@
     <script src="{{url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
     <script src="{{url_for('static', filename='tablesorter/jquery.tablesorter.js') }}"></script>
     <script src="{{url_for('static', filename='tablesorter/tables.js') }}"></script>
+    <script src="{{url_for('static', filename='ladda/spin.min.js') }}"></script>
+    <script src="{{url_for('static', filename='ladda/ladda.min.js') }}"></script>
+{% block script %}{% endblock %}
   </body>
 </html>

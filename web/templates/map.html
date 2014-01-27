@@ -3,6 +3,8 @@
 <div class="container-fluid fill">
   {{gmap.html}}
 </div>
+{% endblock %}
+{% block script %}
 <script type="text/javascript">
   var currentSelection;
   var confirmWindow;
@@ -31,15 +33,16 @@
 	google.maps.event.addListener(polygon, 'rightclick', function(event) {
           currentSelection = polygon;
           confirmWindow = new google.maps.InfoWindow({
-            content: '<b>Submit Selection</b><br/><button onclick="submitSearchArea()">Submit</button><button onclick="removeSelection()">Remove</button>'
+content: '<div class="container-fluid"><b>Selection</b><br/><div class="btn-group btn-group-xs"><button class="btn btn-primary btn-success ladda-button" data-style="zoom-in" onclick="submitSearchArea()"><span class="ladda-label">Submit</span><span class="ladda-spinner"></span></button><button class="btn btn-danger" onclick="removeSelection()">Remove</button></div></div>'
           });
           confirmWindow.setPosition(event.latLng);
  	  confirmWindow.open(map);	   
+          Ladda.bind('button');
         });
     });
 
   }
-
+  
   function removeSelection() {
     if(currentSelection) {
       currentSelection.setEditable(false);
@@ -50,7 +53,6 @@
   }
 
   function submitSearchArea() {
-    confirmWindow.close();
     if(currentSelection) {
       submitPolygonSelection(currentSelection);
     }
@@ -76,6 +78,7 @@
     form.submit();
     document.body.removeChild(form);
   }
+
 </script>
 {{gmap.js}}
 <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=drawing&sensor=false"></script>

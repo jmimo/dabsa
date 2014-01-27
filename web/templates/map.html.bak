@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container-fluid fill">
+  {{gmap.html}}
+</div>
+<script type="text/javascript">
+  function extendMap(map) {
+    var controlDiv = document.createElement('div');
+    controlDiv.style.padding = '5px';
+
+    // Set CSS for the control border.
+    var controlUI = document.createElement('div');
+    controlUI.style.backgroundColor = 'white';
+    controlUI.style.borderStyle = 'solid';
+    controlUI.style.borderWidth = '2px';
+    controlUI.style.cursor = 'pointer';
+    controlUI.style.textAlign = 'center';
+    controlUI.title = 'Airspaces';
+    controlDiv.appendChild(controlUI);
+
+    // Set CSS for the control interior.
+    var controlText = document.createElement('div');
+    controlText.style.fontFamily = 'Arial,sans-serif';
+    controlText.style.fontSize = '12px';
+    controlText.style.paddingLeft = '4px';
+    controlText.style.paddingRight = '4px';
+    controlText.innerHTML = '<strong>Home</strong>';
+    controlUI.appendChild(controlText);
+  
+    controlDiv.index = 1;
+
+    map.controls[google.maps.ControlPosition.TOP_RIGHT].push(controlDiv);
+  }
+
+</script>
+{{gmap.js}}
+{% endblock %}
