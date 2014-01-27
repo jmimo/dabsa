@@ -4,6 +4,9 @@
   {{gmap.html}}
 </div>
 <script type="text/javascript">
+  var currentSelection;
+  var confirmWindow;
+
   function extendMap(map) {
     var drawingManager = new google.maps.drawing.DrawingManager({
         drawingMode: google.maps.drawing.OverlayType.POLYGON,
@@ -25,13 +28,30 @@
     drawingManager.setMap(map);
 
     google.maps.event.addListener(drawingManager, 'polygoncomplete', function(polygon) {
-	drawingManager.setDrawingMode(null);
-	google.maps.event.addListener(polygon, 'rightclick', function(polygon) {
-	  polygon.setMap(null);
+        currentSelection = polygon;
+	google.maps.event.addListener(polygon, 'rightclick', function(event) {
+          confirmWindow = new google.maps.InfoWindow({
+            content: '<b>Submit Selection</b><br/><button onclick="submitSearchArea()">Submit</button><button onclick="removeSelection()">Remove</button>'
+          });
+          confirmWindow.setPosition(event.latLng);
+ 	  confirmWindow.open(map);	   
         });
-        submitPolygonSelection(polygon);
     });
 
+  }
+
+  function removeSelection() {
+    if(currentSelection) {
+      currentSelection.setEditable(false);
+      currentSelection.setMap(null);
+      currentSelection = null;
+    }
+    confirmWindow.close();
+  }
+
+  function submitSearchArea() {
+    confirmWindow.close();
+    submitPolygonSelection(currentSelection);
   }
 
   function submitPolygonSelection(polygon) {
@@ -51,9 +71,7 @@
         form.appendChild(point);
     });
     document.body.appendChild(form);
-    if(confirm("Calculate Selection?")) {
-      form.submit();
-    }
+    form.submit();
     document.body.removeChild(form);
   }
 </script>
