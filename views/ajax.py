@@ -4,6 +4,7 @@ from flask import request
 
 @app.route('/ajax/selection', methods=['GET','POST'])
 def ajax_evaluate():
-    afile = AirspaceFile.query.all()
-    return afile[0].to_JSON()
+    return request.form['polygon'] 
+    #afile = AirspaceFile.query.all()
+    #return str(afile[0].serialize)
 

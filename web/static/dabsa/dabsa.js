@@ -2,8 +2,8 @@
 //
 // Author: Michael Mimo Moratti
 
-function initialize_google_map(map, htmlElementId, position, zoom) {
-  map = new google.maps.Map(document.getElementById(htmlElementId), {
+function initialize_google_map(htmlElementId, position, zoom) {
+  return new google.maps.Map(document.getElementById(htmlElementId), {
     center: position,
     zoom: zoom,
     mapTypeId: google.maps.MapTypeId.SATELLITE
