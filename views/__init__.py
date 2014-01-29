@@ -10,6 +10,7 @@ def shutdown_database(exception=None):
 import index 
 import imp0rt
 import m4p
+import ajax
 
 #@app.route('/')
 #def welcome():

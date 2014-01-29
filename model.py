@@ -1,6 +1,8 @@
 from database import Base
 from sqlalchemy import Column, Integer, Float, String, DateTime, ForeignKey
 from sqlalchemy.orm import relationship, backref
+from collections import defaultdict
+from json import dumps
 
 class AirspaceFile(Base):
     __tablename__ = "AirspaceFile"
@@ -11,9 +13,18 @@ class AirspaceFile(Base):
 
     def get_id(self):
         return id
+    
+    def to_JSON(self):
+        values = defaultdict(list)
+        values['id'] = self.id
+        values['name'] = self.name
+        values['import_date'] = str(self.importDate)
+        for index, airspace in enumerate(self.airspaces):
+            values['airspaces'].append(airspace.to_JSON())
+        return dumps(values)
 
-    #def __repr__(self):
-    #    return "[id:%s][name:%s][importDate:%s][airspaces:%s]" % (self.id,self.name,self.importDate,len(self.airspaces))
+    def __repr__(self):
+        return self.to_JSON()
 
 class Airspace(Base):
     __tablename__ = "Airspace"
@@ -25,14 +36,25 @@ class Airspace(Base):
     ceiling = Column(String)
     file_id = Column(Integer, ForeignKey('AirspaceFile.id'))
     points = relationship('Point', backref='airspace')
+
+    def to_JSON(self):
+        values = defaultdict(list)
+        values['id'] = self.id
+        values['name'] = self.name
+        values['description'] = self.description
+        values['type'] = self.type
+        values['floor'] = self.floor
+        values['ceiling'] = self.ceiling
+        for index, point in enumerate(self.points):
+            values['points'].append(point.to_JSON())
+        return dumps(values)
     
     def __repr__(self):
-       return "[id:%s][name:%s][type:%s][floor:%s][ceiling:%s][entries:%s]" % (self.id,self.name,self.type,self.floor,self.ceiling,len(self.entries))
+        return self.to_JSON()
 
 class Point(Base):
     __tablename__ = "Point"
     id = Column(Integer, primary_key=True)
-    prefix = Column(String)
     longitude = Column(String)
     longitude_dec = Column(Float)
     latitude = Column(String)
@@ -40,5 +62,15 @@ class Point(Base):
     index = Column(Integer)
     airspace_id = Column(Integer, ForeignKey('Airspace.id'))
 
+    def to_JSON(self):
+        values = defaultdict(list)
+        values['id'] = self.id
+        values['index'] = self.index
+        values['latitude'] = self.latitude
+        values['latitude_dec'] = self.latitude_dec
+        values['longitude'] = self.longitude
+        values['longitude_dec'] = self.longitude_dec
+        return dumps(values)
+
     def __repr__(self):
-       return "[id:%s][index:%s][prefix:%s][longitude:%s][latitude:%s]" % (self.id,self.index,self.prefix,self.longitude,self.latitude)
+        return self.to_JSON()
