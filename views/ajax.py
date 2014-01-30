@@ -36,7 +36,7 @@ def ajax_evaluate():
     response = '{"airspaces":['
     length = len(airspaces) - 1
     for index, airspace in enumerate(airspaces):
-        response += str(airspace.serialize)
+        response += ('%s' % airspace.serialize)
 	if index < length:
 	    response += ','
     response += ']}'
