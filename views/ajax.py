@@ -18,8 +18,11 @@ def ajax_evaluate():
         counter += 1
 
     airspaces = gis.find_all_airspaces_inside_selected_polygon(points=Point.query.all(),polypoints=points) 
-    response = '{['
-    for airspace in airspaces:
-        response += str(airspace.serialize)
+    response = '{"airspaces":['
+    length = len(airspaces) - 1
+    for index, airspace in enumerate(airspaces):
+        response += str(airspace.serialize).replace("'",'"').replace('u"', '"')
+	if index < length:
+	    response += ','
     response += ']}'
     return response
