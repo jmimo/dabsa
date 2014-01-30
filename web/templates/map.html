@@ -80,19 +80,19 @@
       $.post('/ajax/selection', data, function(response) {
         confirmWindow.close();
         removeSelection();
-        airspaces = JSON.parse(response);
-        for(var i = 0 ; i < airspaces.length ; i++) {
-          if(airspaces[i].points.length > 2) {
-            drawPolygon(airspaces[i]);
-          }
-        }
+        var airspaces = JSON.parse(response);
+        $.each(airspaces['airspaces'], function(key, value) {
+          if(value['points'].length > 2) {
+            drawPolygon(value); 
+          }    
+        });
         alert('Welcome Back');
       });
     }
   }
 
   function drawPolygon(polygon) {
-    alert(polygon.description);
+    alert(polygon['name']);
   }
   /*$(document).ready(function load(){
     
