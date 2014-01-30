@@ -2,9 +2,6 @@ from baseview import BaseView
 from web import app
 from flask import request
 from config import MAP_CENTER
-from gmap import Map, Polyline, Polygon, Marker
-from model import Point
-import gis
 
 class MapView(BaseView):
     methods = ['GET']
