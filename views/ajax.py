@@ -36,11 +36,11 @@ def ajax_evaluate():
     response = '{"airspaces":['
     length = len(airspaces) - 1
     for index, airspace in enumerate(airspaces):
-        response += str(airspace.serialize).replace("'",'"').replace('u"', '"')
+        response += str(airspace.serialize)
 	if index < length:
 	    response += ','
     response += ']}'
-
+    response = response.replace("'",'"').replace('u"', '"')
     print time.time() - start_serialization, "seconds for serialization of data to json format"
 
     return response
