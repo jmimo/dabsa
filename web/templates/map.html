@@ -71,20 +71,29 @@
 
   function fetchSelectionData() {
     if(currentSelection) {
-      var data = [];
+      data = {};
       currentSelection.getPath().forEach(function(latlng,i) {
         data['point_' + i] = latlng.lat() + ':' + latlng.lng();
       });
-      alert(data);
-      $.post('/ajax/selection', {
-        polygon: data 
-      }, function(response) {
+      data['size'] = currentSelection.getPath().getLength();
+
+      $.post('/ajax/selection', data, function(response) {
         confirmWindow.close();
+        removeSelection();
+        airspaces = JSON.parse(response);
+        for(var i = 0 ; i < airspaces.length ; i++) {
+          if(airspaces[i].points.length > 2) {
+            drawPolygon(airspaces[i]);
+          }
+        }
         alert('Welcome Back');
       });
     }
   }
 
+  function drawPolygon(polygon) {
+    alert(polygon.description);
+  }
   /*$(document).ready(function load(){
     
   });*/
