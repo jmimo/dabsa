@@ -12,4 +12,4 @@ class MapView(BaseView):
     def dispatch_request(self):
         return self.render_template(self.get_objects())
    
-app.add_url_rule('/map', view_func=MapView.as_view('mapview'))
+app.add_url_rule('/', view_func=MapView.as_view('mapview'))

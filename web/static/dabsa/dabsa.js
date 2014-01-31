@@ -51,6 +51,7 @@ function load_drawing_manager(map, confirmWindow, currentSelectionFunctionName) 
 
 function fetch_selection_data(map, currentSelection, url) {
   // TODO: store current selection polygon in shape storage for further use.
+  // TODO: offer choice whether the current dispalyed shapes are to be removed.
   remove_all_shapes_from_map();
   data = {};
   currentSelection.getPath().forEach(function(latlng,i) {
