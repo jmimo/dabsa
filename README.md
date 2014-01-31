@@ -7,6 +7,7 @@ Required: Python Libraries and Flask extension
 
 - flask
 - sqlalchemy
+- numpy
 
 - GEOS C Library
 
