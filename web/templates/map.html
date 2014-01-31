@@ -13,6 +13,7 @@
   var currentSelection;
   var confirmWindow = create_confirm_selection_dialog('processSelection', 'removeSelection');
   load_drawing_manager(map, confirmWindow, 'setCurrentSelection');
+  create_selection_control(map);
 
   function setCurrentSelection(selection) {
     currentSelection = selection;

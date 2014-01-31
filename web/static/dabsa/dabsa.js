@@ -5,11 +5,17 @@
 // TODO: create shape parameter settings container
 
 function initialize_google_map(htmlElementId, position, mapType, zoom) {
-  return new google.maps.Map(document.getElementById(htmlElementId), {
-    center: position,
+  var mapOptions = {
     zoom: zoom,
-    mapTypeId: mapType
-  });
+    center: position,
+    mapTypeId: mapType,
+    mapTypeControl: true,
+    mapTypeControlOptions: {
+      position: google.maps.ControlPosition.RIGHT_BOTTOM
+    },
+    zoomControl: true
+  }
+  return new google.maps.Map(document.getElementById(htmlElementId), mapOptions);
 }
 
 function create_confirm_selection_dialog(processButtonFunctionName, removeButtonFunctionName) {
@@ -47,7 +53,15 @@ function load_drawing_manager(map, confirmWindow, currentSelectionFunctionName) 
       Ladda.bind('button');
     });
   });
-  }
+}
+
+function create_selection_control(map) {
+  var rootDiv = document.createElement('div');
+  rootDiv.className = 'container-fluid';
+  rootDiv.innerHTML = '<strong>Selection Menu</strong>'   
+  // TODO: create context menu
+  map.controls[google.maps.ControlPosition.RIGHT_TOP].push(rootDiv);
+}
 
 function fetch_selection_data(map, currentSelection, url) {
   // TODO: store current selection polygon in shape storage for further use.
