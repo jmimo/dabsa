@@ -8,28 +8,6 @@
 <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=drawing&sensor=false"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='dabsa/dabsa.js') }}"></script>
 <script type="text/javascript">
-  initialize_shape_storage(); 
-  var map = initialize_google_map('mymap', new google.maps.LatLng(46.801111111111105, 8.226666666666667) , google.maps.MapTypeId.SATELLITE, 8);
-  var currentSelection;
-  var confirmWindow = create_confirm_selection_dialog('processSelection', 'removeSelection');
-  load_drawing_manager(map, confirmWindow, 'setCurrentSelection');
-  create_selection_control(map);
-
-  function setCurrentSelection(selection) {
-    currentSelection = selection;
-  }
-
-  function processSelection() {
-   fetch_selection_data(map, currentSelection, '/ajax/selection');
-  }
-
-  function removeSelection() {
-    if(currentSelection) {
-      currentSelection.setEditable(false);
-      currentSelection.setMap(null);
-      currentSelection = null;
-    }
-    confirmWindow.close();
-  }
+  var map = initialize_google_map('mymap', new google.maps.LatLng({{ home_coordinates[0]  }}, {{ home_coordinates[1] }}) , {{ map_type }}, {{ map_zoom }});
 </script>
 {% endblock %}

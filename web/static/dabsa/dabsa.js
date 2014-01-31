@@ -4,7 +4,11 @@
 
 // TODO: create shape parameter settings container
 
+var currentSelection;
+var confirmWindow;
+
 function initialize_google_map(htmlElementId, position, mapType, zoom) {
+  initialize_shape_storage();
   var mapOptions = {
     zoom: zoom,
     center: position,
@@ -15,16 +19,22 @@ function initialize_google_map(htmlElementId, position, mapType, zoom) {
     },
     zoomControl: true
   }
-  return new google.maps.Map(document.getElementById(htmlElementId), mapOptions);
+  var map = new google.maps.Map(document.getElementById(htmlElementId), mapOptions);
+  confirmWindow = create_confirm_selection_dialog();
+  load_drawing_manager(map);
+  return map;
 }
 
-function create_confirm_selection_dialog(processButtonFunctionName, removeButtonFunctionName) {
+var currentSelection;
+
+
+function create_confirm_selection_dialog() {
  return new google.maps.InfoWindow({
-       content: '<div class="container-fluid"><b>Selection</b><br/><div class="btn-group btn-group-xs"><button class="btn btn-primary btn-success ladda-button" data-style="zoom-in" onclick="' + processButtonFunctionName  + '()"><span class="ladda-label">Submit</span><span class="ladda-spinner"></span></button><button class="btn btn-danger" onclick="' + removeButtonFunctionName + '()">Remove</button></div></div>'
+       content: '<div class="container-fluid"><b>Selection</b><br/><div class="btn-group btn-group-xs"><button class="btn btn-primary btn-success ladda-button" data-style="zoom-in" onclick="fetch_selection_data()"><span class="ladda-label">Submit</span><span class="ladda-spinner"></span></button><button class="btn btn-danger" onclick="remove_selection()">Remove</button></div></div>'
       });
 }
 
-function load_drawing_manager(map, confirmWindow, currentSelectionFunctionName) {
+function load_drawing_manager(map) {
   var drawingManager = new google.maps.drawing.DrawingManager({
     drawingMode: google.maps.drawing.OverlayType.POLYGON,
     drawingControl: true,
@@ -46,13 +56,21 @@ function load_drawing_manager(map, confirmWindow, currentSelectionFunctionName) 
 
   google.maps.event.addListener(drawingManager, 'polygoncomplete', function(polygon) {
     google.maps.event.addListener(polygon, 'rightclick', function(event) {
-      window[currentSelectionFunctionName](polygon);
       currentSelection = polygon;
       confirmWindow.setPosition(event.latLng);
       confirmWindow.open(map);
       Ladda.bind('button');
     });
   });
+}
+
+function remove_selection() {
+  if(currentSelection) {
+    currentSelection.setEditable(false);
+    currentSelection.setMap(null);
+    currentSelection = null;
+  }
+  confirmWindow.close();
 }
 
 function create_selection_control(map) {
@@ -63,7 +81,7 @@ function create_selection_control(map) {
   map.controls[google.maps.ControlPosition.RIGHT_TOP].push(rootDiv);
 }
 
-function fetch_selection_data(map, currentSelection, url) {
+function fetch_selection_data() {
   // TODO: store current selection polygon in shape storage for further use.
   // TODO: offer choice whether the current dispalyed shapes are to be removed.
   remove_all_shapes_from_map();
@@ -73,9 +91,9 @@ function fetch_selection_data(map, currentSelection, url) {
   });
   data['size'] = currentSelection.getPath().getLength();
 
-  $.post(url, data, function(response) {
+  $.post('/ajax/selection', data, function(response) {
     confirmWindow.close();
-    removeSelection();
+    remove_selection();
     var airspaces = JSON.parse(response);
     $.each(airspaces['airspaces'], function(key, value) {
       var points = value['points'].length;
