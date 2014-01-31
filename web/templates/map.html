@@ -8,6 +8,7 @@
 <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=drawing&sensor=false"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='dabsa/dabsa.js') }}"></script>
 <script type="text/javascript">
+  initialize_shape_storage(); 
   var map = initialize_google_map('mymap', new google.maps.LatLng(46.801111111111105, 8.226666666666667) , google.maps.MapTypeId.SATELLITE, 8);
   var currentSelection;
   var confirmWindow = create_confirm_selection_dialog('processSelection', 'removeSelection');

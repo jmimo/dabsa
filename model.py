@@ -27,6 +27,7 @@ class Airspace(Base):
     description = Column(String)
     name = Column(String)
     type = Column(String)
+    subtype = Column(String)
     floor = Column(String)
     ceiling = Column(String)
     file_id = Column(Integer, ForeignKey('AirspaceFile.id'))
@@ -37,6 +38,7 @@ class Airspace(Base):
         return {
             'id': self.id,
             'name': self.name,
+            'description': self.description,
             'type': self.type,
             'floor': self.floor,
             'ceiling': self.ceiling,

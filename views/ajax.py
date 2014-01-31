@@ -1,5 +1,6 @@
 from web import app
-from model import Point
+from database import db
+from model import Airspace, Point
 from flask import request
 import gis
 import time
@@ -18,8 +19,12 @@ def ajax_evaluate():
         points.append((latlng[0],latlng[1]))
         counter += 1
 
-    dbpoints = Point.query.all()
+    #dbpoints = Point.query.all()
     #selected_airspaces = Airspace.query.all()
+
+
+    query = db.query(Point).join(Point.airspace).filter(Airspace.subtype == None)
+    dbpoints = query.all()
     
     airspaces = gis.find_all_airspaces_inside_selected_polygon(points=dbpoints,polypoints=points) 
 

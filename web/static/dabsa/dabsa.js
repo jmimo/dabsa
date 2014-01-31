@@ -50,6 +50,8 @@ function load_drawing_manager(map, confirmWindow, currentSelectionFunctionName) 
   }
 
 function fetch_selection_data(map, currentSelection, url) {
+  // TODO: store current selection polygon in shape storage for further use.
+  remove_all_shapes_from_map();
   data = {};
   currentSelection.getPath().forEach(function(latlng,i) {
     data['point_' + i] = latlng.lat() + ':' + latlng.lng();
@@ -63,13 +65,16 @@ function fetch_selection_data(map, currentSelection, url) {
     $.each(airspaces['airspaces'], function(key, value) {
       var points = value['points'].length;
       if(points == 2) {
-	 draw_polyline(map,value);
+         draw_polyline(map,value);
       } else if(points > 2) {
 	 draw_polygon(map,value);
       }
     });
   });
 }
+
+var polygonConfirmWindow;
+var currentPolygon;
 
 function draw_polygon(map, polygon) {
   var polygon_def = new google.maps.Polygon({    
@@ -80,7 +85,28 @@ function draw_polygon(map, polygon) {
     fillcolor: '#FF0000',
     fillopacity: 0.35
   });
+  polygon_def.set('type', 'polygon');
+  polygon_def.set('identifier', polygon['id']);
   polygon_def.setMap(map);
+  store_shape(polygon['id'], polygon_def);
+  google.maps.event.addListener(polygon_def, 'click', function(event) {
+    currentPolygon = polygon_def;
+   polygonConfirmWindow = new google.maps.InfoWindow({
+     content: '<div class="container-fluid"><b>' + polygon['name']  + '</b><br/><em>' + polygon['description'] + '</em><div class="btn-group btn-group-xs"><button class="btn btn-danger" onclick="remove_polygon()">Remove</button></div></div>'
+   });
+   polygonConfirmWindow.setPosition(event.latLng);
+   polygonConfirmWindow.open(map);
+  });
+}
+
+function remove_polygon() {
+  if(currentPolygon) {
+    currentPolygon.setMap(null);
+    remove_shape(currentPolygon.get('identifier'));
+  }
+  if(polygonConfirmWindow) {
+    polygonConfirmWindow.close();
+  }
 }
 
 function draw_polyline(map, polyline) {
@@ -88,6 +114,9 @@ function draw_polyline(map, polyline) {
     path: create_coordinate_array(polyline),
     map: map 
   });
+  polyline_def.set('type', 'polyline');
+  polyline_def.set('identifier', polyline['id']);
+  store_shape(polyline['id'], polyline-def);
 }
 
 function create_coordinate_array(drawingObject) {
@@ -96,4 +125,48 @@ function create_coordinate_array(drawingObject) {
     coords[index] = new google.maps.LatLng(point['latitude_dec'],point['longitude_dec']);
   });
   return coords;
+}
+
+function remove_all_shapes_from_map() {
+  var shapes = retrieve_all_shapes();
+  if (shapes != null) {
+    $.each(shapes, function(key, value) {
+      if(value) {
+        value.setMap(null);
+      }
+    });
+  }
+  remove_all_shapes();
+}
+
+// ###################################################
+// Shape Storage
+// ###################################################
+
+var shapeStorage;
+
+function initialize_shape_storage() {
+  shapeStorage = {};
+}
+
+function store_shape(identifier, shape) {
+  shapeStorage[identifier] = shape;
+}
+
+function retrieve_shape(identifier) {
+  return shapeStorage[identifier];
+}
+
+function remove_shape(identifier) {
+  var shape = shapeStorage[identifier];
+  shapeStorage[identifier] = null;
+  return shape;
+}
+
+function retrieve_all_shapes() {
+  return shapeStorage;
+}
+
+function remove_all_shapes() {
+  initialize_shape_storage();
 }
