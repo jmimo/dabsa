@@ -5,7 +5,7 @@
 // TODO: create shape parameter settings container
 
 var currentSelection;
-var confirmWindow;
+var confirmWindow; 
 
 function initialize_google_map(htmlElementId, position, mapType, zoom) {
   initialize_shape_storage();
@@ -20,18 +20,27 @@ function initialize_google_map(htmlElementId, position, mapType, zoom) {
     zoomControl: true
   }
   var map = new google.maps.Map(document.getElementById(htmlElementId), mapOptions);
-  confirmWindow = create_confirm_selection_dialog();
+  confirmWindow = new google.maps.InfoWindow();
+  load_confirm_selection_dialog();
   load_drawing_manager(map);
+  load_selection_control(map);
   return map;
 }
 
 var currentSelection;
 
+function load_confirm_selection_dialog() {
+ $.get('/ajax/selectionmenu', function(data) {
+  confirmWindow.setContent(data);
+ });
+}
 
-function create_confirm_selection_dialog() {
- return new google.maps.InfoWindow({
-       content: '<div class="container-fluid"><b>Selection</b><br/><div class="btn-group btn-group-xs"><button class="btn btn-primary btn-success ladda-button" data-style="zoom-in" onclick="fetch_selection_data()"><span class="ladda-label">Submit</span><span class="ladda-spinner"></span></button><button class="btn btn-danger" onclick="remove_selection()">Remove</button></div></div>'
-      });
+function load_selection_control(map) {
+  $.get('/ajax/staticmenu', function(data) {
+    var rootDiv = document.createElement('div');
+    rootDiv.innerHTML = data;
+    map.controls[google.maps.ControlPosition.RIGHT_TOP].push(rootDiv);
+  }); 
 }
 
 function load_drawing_manager(map) {
@@ -73,16 +82,7 @@ function remove_selection() {
   confirmWindow.close();
 }
 
-function create_selection_control(map) {
-  var rootDiv = document.createElement('div');
-  rootDiv.className = 'container-fluid';
-  rootDiv.innerHTML = '<strong>Selection Menu</strong>'   
-  // TODO: create context menu
-  map.controls[google.maps.ControlPosition.RIGHT_TOP].push(rootDiv);
-}
-
 function fetch_selection_data() {
-  // TODO: store current selection polygon in shape storage for further use.
   // TODO: offer choice whether the current dispalyed shapes are to be removed.
   remove_all_shapes_from_map();
   data = {};

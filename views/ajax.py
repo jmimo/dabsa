@@ -1,9 +1,17 @@
 from web import app
 from database import db
 from model import Airspace, Point
-from flask import request
+from flask import request, render_template
 import gis
 import time
+
+@app.route('/ajax/selectionmenu', methods=['GET'])
+def ajax_selection_menu():
+    return render_template('selection_menu.html')
+
+@app.route('/ajax/staticmenu', methods=['GET'])
+def ajax_static_menu():
+    return render_template('static_menu.html')
 
 @app.route('/ajax/selection', methods=['POST'])
 def ajax_evaluate():

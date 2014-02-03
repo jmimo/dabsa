@@ -20,3 +20,18 @@ body {
     min-height: 100%;
     width: 100%;
   }
+
+  .infowindow {
+    padding: 10px 10px;
+    width: 160px;
+    height: 70px;
+  }
+
+  .mapMenuOutline {
+    padding: 5px 5px;
+  }
+
+  .mapMenu {
+    background-color: white;
+    padding: 5px 5px;
+  }
