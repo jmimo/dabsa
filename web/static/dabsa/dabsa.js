@@ -106,11 +106,11 @@ function load_drawing_manager(map) {
     polygonOptions: {
       draggable: true,
       editable: true,
-      strokeColor: colorSheme['strokeColor'],
-      strokeOpacity: colorSheme['strokeOpacity'],
-      strokeWeight: colorSheme['strokeWeight'],
-      fillColor: colorSheme['fillColor'],
-      fillOpacity: colorSheme['fillOpacity']
+      strokeColor: colorSheme['selection']['strokeColor'],
+      strokeOpacity: colorSheme['selection']['strokeOpacity'],
+      strokeWeight: colorSheme['selection']['strokeWeight'],
+      fillColor: colorSheme['selection']['fillColor'],
+      fillOpacity: colorSheme['selection']['fillOpacity']
     }  
   });
   drawingManager.setMap(map);
