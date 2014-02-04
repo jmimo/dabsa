@@ -7,6 +7,46 @@
 var currentSelection;
 var confirmWindow; 
 
+// color sheme
+
+var colorSheme = {
+  defaultSheme: {
+    strokeColor: '#FF0000',
+    strokeOpacity: 0.8,
+    strokeWeight: 2,
+    fillColor: '#FF0000',
+    fillOpacity: 0.35
+  },
+  selection: {
+    strokeColor: '#FF6600',
+    stokeOpacity: 0.8,
+    strokeWeight: 2,
+    fillColor: '#FF6600',
+    fillOpacity: 0.35
+  },
+  restricted: {
+    strokeColor: '#FF6600',
+    strokeOpacity: 0.8,
+    strokeWeight: 2,
+    fillColor: '#FF6600',
+    fillOpacity: 0.35
+  },
+  danger: {
+    strokeColor: '#FF0000',
+    strokeOpacity: 0.8,
+    strokeWeight: 2,
+    fillColor: '#FF0000',
+    fillOpacity: 0.35
+  },
+  ctr: {
+    strokeColor: '#3300FF',
+    strokeOpacity: 0.8,
+    strokeWeight: 2,
+    fillColor: '#3300FF',
+    fillOpacity: 0.35
+  }
+};
+
 function initialize_google_map(htmlElementId, position, mapType, zoom) {
   initialize_shape_storage();
   var mapOptions = {
@@ -27,8 +67,6 @@ function initialize_google_map(htmlElementId, position, mapType, zoom) {
   return map;
 }
 
-var currentSelection;
-
 function load_confirm_selection_dialog() {
  $.get('/ajax/selectionmenu', function(data) {
   confirmWindow.setContent(data);
@@ -43,6 +81,20 @@ function load_selection_control(map) {
   }); 
 }
 
+/*
+function load_shape_context_dialog(shapeName, shapeDescription) {
+  var result;
+  $.ajax({
+    url: '/ajax/shapemenu?name=' + shapeName + '&description=' shapeDescription,
+    success function(data) {
+      result = data;
+    },
+    async: false
+  });
+  return result;
+} 
+*/
+
 function load_drawing_manager(map) {
   var drawingManager = new google.maps.drawing.DrawingManager({
     drawingMode: google.maps.drawing.OverlayType.POLYGON,
@@ -54,11 +106,11 @@ function load_drawing_manager(map) {
     polygonOptions: {
       draggable: true,
       editable: true,
-      strokeColor: '#FF6600',
-      strokeOpacity: 0.8,
-      strokeWeight: 2,
-      fillColor: '#FFCC00',
-      fillOpacity: 0.35
+      strokeColor: colorSheme['strokeColor'],
+      strokeOpacity: colorSheme['strokeOpacity'],
+      strokeWeight: colorSheme['strokeWeight'],
+      fillColor: colorSheme['fillColor'],
+      fillOpacity: colorSheme['fillOpacity']
     }  
   });
   drawingManager.setMap(map);
@@ -110,19 +162,23 @@ var polygonConfirmWindow;
 var currentPolygon;
 
 function draw_polygon(map, polygon) {
+  var selectedColorSheme = colorSheme['defaultSheme'];
+  if(polygon['type'] == 'CTR') {
+    selectedColorSheme = colorSheme['ctr'];
+  }
   var polygon_def = new google.maps.Polygon({    
     paths: create_coordinate_array(polygon),
-    strokeColor: '#FF0000',
-    strokeOpacity: 0.8,
-    strokeWeight: 2,
-    fillcolor: '#FF0000',
-    fillopacity: 0.35
+    strokeColor: selectedColorSheme['strokeColor'],
+    strokeOpacity: selectedColorSheme['strokeOpacity'],
+    strokeWeight: selectedColorSheme['strokeWeigth'],
+    fillColor: selectedColorSheme['fillColor'],
+    fillOpacity: selectedColorSheme['fillOpacity']
   });
   polygon_def.set('type', 'polygon');
   polygon_def.set('identifier', polygon['id']);
   polygon_def.setMap(map);
   store_shape(polygon['id'], polygon_def);
-  google.maps.event.addListener(polygon_def, 'click', function(event) {
+  google.maps.event.addListener(polygon_def, 'rightclick', function(event) {
     currentPolygon = polygon_def;
    polygonConfirmWindow = new google.maps.InfoWindow({
      content: '<div class="container-fluid"><b>' + polygon['name']  + '</b><br/><em>' + polygon['description'] + '</em><div class="btn-group btn-group-xs"><button class="btn btn-danger" onclick="remove_polygon()">Remove</button></div></div>'
