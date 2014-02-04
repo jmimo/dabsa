@@ -1,9 +1,9 @@
 from web import app
 from database import db
+import shapely.geometry
+from numpy import array
 from model import Airspace, Point
 from flask import request, render_template
-import gis
-import time
 
 @app.route('/ajax/selectionmenu', methods=['GET'])
 def ajax_selection_menu():
@@ -33,14 +33,23 @@ def ajax_evaluate():
 
     query = db.query(Point).join(Point.airspace).filter(Airspace.subtype == None)
     dbpoints = query.all()
-    
-    airspaces = gis.find_all_airspaces_inside_selected_polygon(points=dbpoints,polypoints=points) 
+
+    airspaces = find_all_airspaces_inside_selected_polygon(dbpoints,points)
 
     length = len(airspaces) - 1
     response = '{"airspaces":['
     response += ''.join([add_separator_if_necessary(length == index,airspace) for index, airspace in enumerate(airspaces)])
     response += ']}'
     return response.replace("u'",'"').replace("'", '"')
+
+def find_all_airspaces_inside_selected_polygon(points,polypoints):
+    polygon = shapely.geometry.Polygon(array(polypoints))
+    airspaces = []
+    for point in points:
+        spoint = shapely.geometry.Point(point.latitude_dec,point.longitude_dec)
+        if(spoint.within(polygon)):
+            airspaces.append(point.airspace)
+    return airspaces
 
 def add_separator_if_necessary(isLast, airspace):
     if isLast:
