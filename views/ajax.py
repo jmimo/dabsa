@@ -13,8 +13,8 @@ def ajax_selection_menu():
 def ajax_static_menu():
     return render_template('static_menu.html')
 
-@app.route('/ajax/selection', methods=['POST'])
-def ajax_evaluate():
+@app.route('/ajax/selection/<qualifier>', methods=['POST'])
+def ajax_evaluate(qualifier):
     size = int(request.form['size'])
     points = []
     formpoint = None
@@ -27,11 +27,12 @@ def ajax_evaluate():
         points.append((latlng[0],latlng[1]))
         counter += 1
 
-    #dbpoints = Point.query.all()
-    #selected_airspaces = Airspace.query.all()
+    query = None
+    if qualifier == 'airspace':
+        query = db.query(Point).join(Point.airspace).filter(Airspace.subtype == None)
+    elif qualifier == 'obstacle':
+        query = db.query(Point).join(Point.airspace).filter(Airspace.subtype != None)
 
-
-    query = db.query(Point).join(Point.airspace).filter(Airspace.subtype == None)
     dbpoints = query.all()
 
     airspaces = find_all_airspaces_inside_selected_polygon(dbpoints,points)
@@ -49,7 +50,7 @@ def find_all_airspaces_inside_selected_polygon(points,polypoints):
         spoint = shapely.geometry.Point(point.latitude_dec,point.longitude_dec)
         if(spoint.within(polygon)):
             airspaces.append(point.airspace)
-    return airspaces
+    return set(airspaces)
 
 def add_separator_if_necessary(isLast, airspace):
     if isLast:

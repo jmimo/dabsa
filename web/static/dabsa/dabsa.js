@@ -4,7 +4,6 @@
 
 // TODO: create shape parameter settings container
 
-var currentSelection;
 var confirmWindow; 
 
 // color sheme
@@ -117,35 +116,53 @@ function load_drawing_manager(map) {
 
   google.maps.event.addListener(drawingManager, 'polygoncomplete', function(polygon) {
     google.maps.event.addListener(polygon, 'rightclick', function(event) {
-      currentSelection = polygon;
+      store_shape('selection', 'current',polygon);
       confirmWindow.setPosition(event.latLng);
       confirmWindow.open(map);
-      Ladda.bind('button');
+      Ladda.bind('button.ladda-button');
     });
   });
 }
 
+
 function remove_selection() {
-  if(currentSelection) {
-    currentSelection.setEditable(false);
-    currentSelection.setMap(null);
-    currentSelection = null;
+  var selection = remove_shape('selection', 'current');
+  if(selection) {
+    selection.setEditable(false);
+    selection.setMap(null);
   }
   confirmWindow.close();
 }
 
+
+function hide_current_selection() {
+  var selection = retrieve_shape('selection', 'current');
+  if(selection) {
+    selection.setMap(null);
+  }
+}
+
+function show_current_selection() {
+  var selection = retrieve_shape('selection', 'current');
+  if(selection) {
+    selection.setMap(map);
+  }
+}
+
 function fetch_selection_data() {
   // TODO: offer choice whether the current dispalyed shapes are to be removed.
-  remove_all_shapes_from_map();
+  // TODO: handle obstacle qualifer.
+  remove_all_shapes_from_map('airspace');
   data = {};
-  currentSelection.getPath().forEach(function(latlng,i) {
+  var selection = retrieve_shape('selection', 'current');
+  selection.getPath().forEach(function(latlng,i) {
     data['point_' + i] = latlng.lat() + ':' + latlng.lng();
   });
-  data['size'] = currentSelection.getPath().getLength();
+  data['size'] = selection.getPath().getLength();
 
-  $.post('/ajax/selection', data, function(response) {
+  $.post('/ajax/selection/airspace', data, function(response) {
     confirmWindow.close();
-    remove_selection();
+    hide_current_selection();
     var airspaces = JSON.parse(response);
     $.each(airspaces['airspaces'], function(key, value) {
       var points = value['points'].length;
@@ -177,7 +194,7 @@ function draw_polygon(map, polygon) {
   polygon_def.set('type', 'polygon');
   polygon_def.set('identifier', polygon['id']);
   polygon_def.setMap(map);
-  store_shape(polygon['id'], polygon_def);
+  store_shape('airspace', polygon['id'], polygon_def);
   google.maps.event.addListener(polygon_def, 'rightclick', function(event) {
     currentPolygon = polygon_def;
    polygonConfirmWindow = new google.maps.InfoWindow({
@@ -191,7 +208,7 @@ function draw_polygon(map, polygon) {
 function remove_polygon() {
   if(currentPolygon) {
     currentPolygon.setMap(null);
-    remove_shape(currentPolygon.get('identifier'));
+    remove_shape('airspace', currentPolygon.get('identifier'));
   }
   if(polygonConfirmWindow) {
     polygonConfirmWindow.close();
@@ -205,7 +222,8 @@ function draw_polyline(map, polyline) {
   });
   polyline_def.set('type', 'polyline');
   polyline_def.set('identifier', polyline['id']);
-  store_shape(polyline['id'], polyline-def);
+  // TODO: add qualifier for airspaces and obstacles in order to store them separately.
+  store_shape('airspace', polyline['id'], polyline-def);
 }
 
 function create_coordinate_array(drawingObject) {
@@ -216,16 +234,15 @@ function create_coordinate_array(drawingObject) {
   return coords;
 }
 
-function remove_all_shapes_from_map() {
-  var shapes = retrieve_all_shapes();
+function remove_all_shapes_from_map(qualifier) {
+  var shapes = retrieve_all_shapes(qualifier);
   if (shapes != null) {
     $.each(shapes, function(key, value) {
-      if(value) {
+      if(key != 'current_selection' && value) {
         value.setMap(null);
       }
     });
   }
-  remove_all_shapes();
 }
 
 // ###################################################
@@ -238,24 +255,36 @@ function initialize_shape_storage() {
   shapeStorage = {};
 }
 
-function store_shape(identifier, shape) {
-  shapeStorage[identifier] = shape;
+function store_shape(category, identifier, shape) {
+  var cat = shapeStorage[category];
+  if(!shapeStorage[category]) {
+    shapeStorage[category] = {};
+  }
+  shapeStorage[category][identifier] = shape;
 }
 
-function retrieve_shape(identifier) {
-  return shapeStorage[identifier];
+function retrieve_shape(category, identifier) {
+  if(shapeStorage[category]) {
+    return shapeStorage[category][identifier];
+  } else {
+    return null;
+  }
 }
 
-function remove_shape(identifier) {
-  var shape = shapeStorage[identifier];
-  shapeStorage[identifier] = null;
+function remove_shape(category, identifier) {
+  if(shapeStorage[category]) {
+    var shape = shapeStorage[category][identifier];
+    shapeStorage[category][identifier] = null;
   return shape;
+  } else {
+    return null;
+  }
 }
 
-function retrieve_all_shapes() {
-  return shapeStorage;
+function retrieve_all_shapes(category) {
+  return shapeStorage[category];
 }
 
-function remove_all_shapes() {
-  initialize_shape_storage();
+function remove_all_shapes(category) {
+  shapeStorage[category] = {};
 }
