@@ -116,6 +116,9 @@ function load_drawing_manager(map) {
 
   google.maps.event.addListener(drawingManager, 'polygoncomplete', function(polygon) {
     google.maps.event.addListener(polygon, 'rightclick', function(event) {
+      // TODO: factor out into separate method in case of reuse.
+      $('#selection-show-hide-buttons-div').removeClass('hide');
+      $('#selection-show-hide-buttons-div').show();
       store_shape('selection', 'current',polygon);
       confirmWindow.setPosition(event.latLng);
       confirmWindow.open(map);
@@ -132,6 +135,7 @@ function remove_selection() {
     selection.setMap(null);
   }
   confirmWindow.close();
+  $('#selection-show-hide-buttons-div').hide();
 }
 
 
