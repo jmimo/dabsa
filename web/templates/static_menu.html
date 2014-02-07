@@ -7,32 +7,9 @@
         <button class="btn btn-primary" onclick="show_current_selection()">Show</button> 
         <button class="btn btn-primary" onclick="hide_current_selection()">Hide</button>
       </div>
-      <!--
-      <div class="checkbox">
-        <label>
-          <input type="checkbox" value="AWY"/>
-          Airway
-        </label>
-     </div>
-     <div class="checkbox">
-        <label>
-          <input type="checkbox" value="CTR"/>
-          CTR
-        </label>
-      </div>
-      <div class="checkbox">
-        <label>
-          <input type="checkbox" value="TMA"/>
-          TMA
-        </label>
-      </div>
-      <div class="checkbox">
-        <label>
-          <input type="checkbox" value="Obstacle"/>
-          Obstacle
-        </label>
-    </div>
-    -->
+  </div>
+  <div id="cleanup-airspaces" class="col-xs-12 hide text-center">
+    <button class="btn btn-primary" onclick="remove_all_shapes_from_map(airspace);hide_element(cleanup-airspaces)">Cleanup</button>
   </div>
 </div>
 </div>

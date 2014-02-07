@@ -116,9 +116,7 @@ function load_drawing_manager(map) {
 
   google.maps.event.addListener(drawingManager, 'polygoncomplete', function(polygon) {
     google.maps.event.addListener(polygon, 'rightclick', function(event) {
-      // TODO: factor out into separate method in case of reuse.
-      $('#selection-show-hide-buttons-div').removeClass('hide');
-      $('#selection-show-hide-buttons-div').show();
+      show_element('#selection-show-hide-buttons-div');
       store_shape('selection', 'current',polygon);
       confirmWindow.setPosition(event.latLng);
       confirmWindow.open(map);
@@ -127,6 +125,14 @@ function load_drawing_manager(map) {
   });
 }
 
+function show_element(id) {
+  $(id).removeClass('hide');
+  $(id).show();
+}
+
+function hide_element(id) {
+  $(id).hide();
+}
 
 function remove_selection() {
   var selection = remove_shape('selection', 'current');
@@ -135,7 +141,7 @@ function remove_selection() {
     selection.setMap(null);
   }
   confirmWindow.close();
-  $('#selection-show-hide-buttons-div').hide();
+  hide_element('#selection-show-hide-buttons-div');
 }
 
 
@@ -168,6 +174,9 @@ function fetch_selection_data() {
     confirmWindow.close();
     hide_current_selection();
     var airspaces = JSON.parse(response);
+    //if(airspaces['airspaces'].length > 0) {
+    show_element('cleanup-airspaces');
+    //}
     $.each(airspaces['airspaces'], function(key, value) {
       var points = value['points'].length;
       if(points == 2) {
