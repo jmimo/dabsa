@@ -116,7 +116,6 @@ function load_drawing_manager(map) {
 
   google.maps.event.addListener(drawingManager, 'polygoncomplete', function(polygon) {
     google.maps.event.addListener(polygon, 'rightclick', function(event) {
-      show_element('#selection-show-hide-buttons-div');
       store_shape('selection', 'current',polygon);
       confirmWindow.setPosition(event.latLng);
       confirmWindow.open(map);
@@ -149,6 +148,7 @@ function hide_current_selection() {
   var selection = retrieve_shape('selection', 'current');
   if(selection) {
     selection.setMap(null);
+    show_element('#selection-show-hide-buttons-div');
   }
 }
 
@@ -159,40 +159,59 @@ function show_current_selection() {
   }
 }
 
-function fetch_selection_data() {
-  // TODO: offer choice whether the current dispalyed shapes are to be removed.
-  // TODO: handle obstacle qualifer.
+function draw_airspaces_within_current_selection() {
   remove_all_shapes_from_map('airspace');
-  data = {};
-  var selection = retrieve_shape('selection', 'current');
+  load_and_draw_data_for_selection('airspace', retrieve_shape('selection', 'current'), null);
+}
+
+function draw_obstacles_within_current_selection() {
+  var ladda_button = Ladda.create(document.querySelector('#button-load-obstacles'));
+  ladda_button.start();
+  remove_all_shapes_from_map('obstacle');
+  load_and_draw_data_for_selection('obstacle', retrieve_shape('selection', 'current'), ladda_button);
+}
+
+function load_and_draw_data_callback(datatype, callbackdata) {
+  if(datatype == 'airspace') {
+    confirmWindow.close();
+    hide_current_selection();
+  }
+  if(datatype == 'obstacle') {
+     if(callbackdata) {
+       callbackdata.stop();
+     }
+  } 
+}
+
+function load_and_draw_data_for_selection(datatype, selection, callbackdata) {
+  var data = {};
   selection.getPath().forEach(function(latlng,i) {
     data['point_' + i] = latlng.lat() + ':' + latlng.lng();
   });
   data['size'] = selection.getPath().getLength();
-
-  $.post('/ajax/selection/airspace', data, function(response) {
-    confirmWindow.close();
-    hide_current_selection();
+  $.post('/ajax/selection/' + datatype, data, function(response) {
     var airspaces = JSON.parse(response);
-    //if(airspaces['airspaces'].length > 0) {
-    show_element('cleanup-airspaces');
-    //}
+    if(airspaces['airspaces'].length > 0) {
+      show_element('#cleanup-airspaces');
+    }
     $.each(airspaces['airspaces'], function(key, value) {
       var points = value['points'].length;
       if(points == 2) {
-         draw_polyline(map,value);
+        draw_polyline(map, datatype, value);
       } else if(points > 2) {
-	 draw_polygon(map,value);
+        draw_polygon(map, datatype, value);
       }
     });
+    load_and_draw_data_callback(datatype, callbackdata);
   });
 }
 
 var polygonConfirmWindow;
 var currentPolygon;
 
-function draw_polygon(map, polygon) {
+function draw_polygon(map, datatype, polygon) {
   var selectedColorSheme = colorSheme['defaultSheme'];
+  // TODO: implement coloring
   if(polygon['type'] == 'CTR') {
     selectedColorSheme = colorSheme['ctr'];
   }
@@ -207,36 +226,35 @@ function draw_polygon(map, polygon) {
   polygon_def.set('type', 'polygon');
   polygon_def.set('identifier', polygon['id']);
   polygon_def.setMap(map);
-  store_shape('airspace', polygon['id'], polygon_def);
+  store_shape(datatype, polygon['id'], polygon_def);
   google.maps.event.addListener(polygon_def, 'rightclick', function(event) {
     currentPolygon = polygon_def;
    polygonConfirmWindow = new google.maps.InfoWindow({
-     content: '<div class="container-fluid"><b>' + polygon['name']  + '</b><br/><em>' + polygon['description'] + '</em><div class="btn-group btn-group-xs"><button class="btn btn-danger" onclick="remove_polygon()">Remove</button></div></div>'
+     content: '<div class="container-fluid"><b>' + polygon['name']  + '</b><br/><em>' + polygon['description'] + '</em><div class="btn-group btn-group-xs"><button class="btn btn-danger" onclick="remove_polygon("' + datatype + '")">Remove</button></div></div>'
    });
    polygonConfirmWindow.setPosition(event.latLng);
    polygonConfirmWindow.open(map);
   });
 }
 
-function remove_polygon() {
+function remove_polygon(datatype) {
   if(currentPolygon) {
     currentPolygon.setMap(null);
-    remove_shape('airspace', currentPolygon.get('identifier'));
+    remove_shape(datatype, currentPolygon.get('identifier'));
   }
   if(polygonConfirmWindow) {
     polygonConfirmWindow.close();
   }
 }
 
-function draw_polyline(map, polyline) {
+function draw_polyline(map, datatype, polyline) {
   var polyline_def = new google.maps.Polyline({
     path: create_coordinate_array(polyline),
     map: map 
   });
   polyline_def.set('type', 'polyline');
   polyline_def.set('identifier', polyline['id']);
-  // TODO: add qualifier for airspaces and obstacles in order to store them separately.
-  store_shape('airspace', polyline['id'], polyline-def);
+  store_shape(datatype, polyline['id'], polyline_def);
 }
 
 function create_coordinate_array(drawingObject) {
@@ -300,4 +318,20 @@ function retrieve_all_shapes(category) {
 
 function remove_all_shapes(category) {
   shapeStorage[category] = {};
+}
+
+// ################################################
+// Static menu
+// ################################################
+
+function toggle_selection_button() {
+  if($('#button-selection-hiding').data('togglestate') == 'show') {
+    hide_current_selection();
+    $('#button-selection-hiding').text('Show');
+    $('#button-selection-hiding').data('togglestate','hide');
+  } else if($('#button-selection-hiding').data('togglestate') == 'hide') {
+    show_current_selection();
+    $('#button-selection-hiding').text('Hide');
+    $('#button-selection-hiding').data('togglestate','show');
+  }
 }
