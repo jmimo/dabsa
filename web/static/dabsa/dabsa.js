@@ -140,6 +140,7 @@ function remove_selection() {
     selection.setMap(null);
   }
   confirmWindow.close();
+  reset_selection_button();  
   hide_element('#selection-show-hide-buttons-div');
 }
 
@@ -334,4 +335,9 @@ function toggle_selection_button() {
     $('#button-selection-hiding').text('Hide');
     $('#button-selection-hiding').data('togglestate','show');
   }
+}
+
+function reset_selection_button() {
+  $('#button-selection-hiding').text('Show');
+  $('#button-selection-hiding').data('togglestate','hide');
 }
