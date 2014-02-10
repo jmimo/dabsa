@@ -40,6 +40,7 @@ class Airspace(Base):
             'name': self.name,
             'description': self.description,
             'type': self.type,
+            'subtype': (self.subtype if self.subtype != None else 'n/a'),
             'floor': self.floor,
             'ceiling': self.ceiling,
             'points': [point.serialize for point in self.points]

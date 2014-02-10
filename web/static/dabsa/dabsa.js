@@ -179,6 +179,13 @@ function draw_obstacles_within_current_selection() {
   load_and_draw_data_for_selection('obstacle', retrieve_shape('selection', 'current'), ladda_button);
 }
 
+function draw_wildlife_protection_within_current_selection() {
+  var ladda_button = Ladda.create(document.querySelector('#button-load-wildlife'));
+  ladda_button.start();
+  remove_all_shapes_from_map('wildlife');
+  load_and_draw_data_for_selection('wildlife', retrieve_shape('selection', 'current'), ladda_button);
+}
+
 function load_and_draw_data_callback(datatype, callbackdata) {
   if(datatype == 'airspace') {
     confirmWindow.close();
@@ -189,6 +196,11 @@ function load_and_draw_data_callback(datatype, callbackdata) {
        callbackdata.stop();
      }
   } 
+  if(datatype == 'wildlife') {
+    if(callbackdata) {
+      callbackdata.stop();
+    }
+  }
 }
 
 function load_and_draw_data_for_selection(datatype, selection, callbackdata) {
@@ -218,14 +230,7 @@ var polygonConfirmWindow;
 var currentPolygon;
 
 function draw_polygon(map, datatype, polygon) {
-  var selectedColorSheme = colorSheme['defaultSheme'];
-  // TODO: implement coloring
-  if(polygon['type'] == 'CTR') {
-    selectedColorSheme = colorSheme['ctr'];
-  }
-  if(polygon['type'] == 'WILDLIFE_PROTECTION') {
-    selectedColorSheme = colorSheme['wildlife'];
-  }
+  var selectedColorSheme = getPolygonColorSheme(polygon);
   var polygon_def = new google.maps.Polygon({    
     paths: create_coordinate_array(polygon),
     strokeColor: selectedColorSheme['strokeColor'],
@@ -246,6 +251,18 @@ function draw_polygon(map, datatype, polygon) {
    polygonConfirmWindow.setPosition(event.latLng);
    polygonConfirmWindow.open(map);
   });
+}
+
+function getPolygonColorSheme(polygon) {
+  var selectedColorSheme = colorSheme['defaultSheme'];
+  // TODO: implement all color shemes for polygons.
+  if(polygon['type'] == 'CTR') {
+    selectedColorSheme = colorSheme['ctr'];
+  }
+  if(polygon['subtype'] == 'WILDLIFE_PROTECTION') {
+    selectedColorSheme = colorSheme['wildlife'];
+  }
+  return selectedColorSheme;
 }
 
 function remove_polygon(datatype) {
@@ -280,9 +297,7 @@ function remove_all_shapes_from_map(qualifier) {
   var shapes = retrieve_all_shapes(qualifier);
   if (shapes != null) {
     $.each(shapes, function(key, value) {
-      if(key != 'current_selection' && value) {
-        value.setMap(null);
-      }
+      value.setMap(null);
     });
   }
 }
