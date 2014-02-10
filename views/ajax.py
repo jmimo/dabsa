@@ -31,8 +31,11 @@ def ajax_evaluate(qualifier):
     if qualifier == 'airspace':
         query = db.query(Point).join(Point.airspace).filter(Airspace.subtype == None)
     elif qualifier == 'obstacle':
-        query = db.query(Point).join(Point.airspace).filter(Airspace.subtype != None)
+        query = db.query(Point).join(Point.airspace).filter((Airspace.subtype == 'CABLE') | (Airspace.subtype == 'CABLECAR'))
+    elif qualifier == 'wildlife':
+	query = db.query(Point).join(Point.airspace).filter(Airspace.subtype == 'WILDLIFE_PROTECTION')
 
+    print query.as_scalar()
     dbpoints = query.all()
 
     airspaces = find_all_airspaces_inside_selected_polygon(dbpoints,points)

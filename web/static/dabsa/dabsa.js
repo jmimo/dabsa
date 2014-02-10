@@ -30,6 +30,13 @@ var colorSheme = {
     fillColor: '#FF6600',
     fillOpacity: 0.35
   },
+  wildlife: {
+    strokeColor: '#00CC00',
+    strokeOpacity: 0.8,
+    strokeWeight: 2,
+    fillColor: '#00CC00',
+    fillOpacity: 0.35
+  },
   danger: {
     strokeColor: '#FF0000',
     strokeOpacity: 0.8,
@@ -215,6 +222,9 @@ function draw_polygon(map, datatype, polygon) {
   // TODO: implement coloring
   if(polygon['type'] == 'CTR') {
     selectedColorSheme = colorSheme['ctr'];
+  }
+  if(polygon['type'] == 'WILDLIFE_PROTECTION') {
+    selectedColorSheme = colorSheme['wildlife'];
   }
   var polygon_def = new google.maps.Polygon({    
     paths: create_coordinate_array(polygon),
