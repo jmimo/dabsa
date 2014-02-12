@@ -2,7 +2,6 @@
 //
 // Author: Michael Mimo Moratti
 
-// TODO: create shape parameter settings container
 
 var confirmWindow; 
 
@@ -246,7 +245,7 @@ function draw_polygon(map, datatype, polygon) {
   google.maps.event.addListener(polygon_def, 'rightclick', function(event) {
     currentPolygon = polygon_def;
    polygonConfirmWindow = new google.maps.InfoWindow({
-     content: '<div class="container-fluid"><b>' + polygon['name']  + '</b><br/><em>' + polygon['description'] + '</em><div class="btn-group btn-group-xs"><button class="btn btn-danger" onclick="remove_polygon("' + datatype + '")">Remove</button></div></div>'
+     content: '<div class="container-fluid"><b>' + polygon['name']  + '</b><br/><em>' + polygon['description'] + '</em><div class="btn-group btn-group-xs"><button class="btn btn-danger" onclick="remove_polygon(&quot;' + datatype + '&quot;,' + polygon['id'] + ')">Remove</button></div></div>'
    });
    polygonConfirmWindow.setPosition(event.latLng);
    polygonConfirmWindow.open(map);
@@ -265,10 +264,10 @@ function getPolygonColorSheme(polygon) {
   return selectedColorSheme;
 }
 
-function remove_polygon(datatype) {
-  if(currentPolygon) {
-    currentPolygon.setMap(null);
-    remove_shape(datatype, currentPolygon.get('identifier'));
+function remove_polygon(datatype, polygonid) {
+  var shape = remove_shape(datatype,polygonid);
+  if(shape) {
+    shape.setMap(null);
   }
   if(polygonConfirmWindow) {
     polygonConfirmWindow.close();
@@ -297,7 +296,9 @@ function remove_all_shapes_from_map(qualifier) {
   var shapes = retrieve_all_shapes(qualifier);
   if (shapes != null) {
     $.each(shapes, function(key, value) {
-      value.setMap(null);
+      if(value) {
+        value.setMap(null);
+      }
     });
   }
 }
