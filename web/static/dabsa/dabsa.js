@@ -245,7 +245,7 @@ function draw_polygon(map, datatype, polygon) {
   google.maps.event.addListener(polygon_def, 'rightclick', function(event) {
     currentPolygon = polygon_def;
    polygonConfirmWindow = new google.maps.InfoWindow({
-     content: '<div class="container-fluid"><b>' + polygon['name']  + '</b><br/><em>' + polygon['description'] + '</em><div class="btn-group btn-group-xs"><button class="btn btn-danger" onclick="remove_polygon(&quot;' + datatype + '&quot;,' + polygon['id'] + ')">Remove</button></div></div>'
+     content: '<div class="container"><b>' + polygon['name']  + '</b><br/><em>' + polygon['description'] + '</em><div class="btn-group btn-group-xs"><button class="btn btn-danger" onclick="remove_polygon(&quot;' + datatype + '&quot;,' + polygon['id'] + ')">Remove</button></div></div>'
    });
    polygonConfirmWindow.setPosition(event.latLng);
    polygonConfirmWindow.open(map);

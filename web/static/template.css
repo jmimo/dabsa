@@ -22,9 +22,8 @@ body {
   }
 
   .infowindow {
-    padding: 10px 10px;
-    width: 160px;
-    height: 70px;
+    width:  155px;
+    height: 50px;
   }
 
   .mapMenuOutline {
