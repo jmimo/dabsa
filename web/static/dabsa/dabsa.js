@@ -4,6 +4,7 @@
 
 
 var confirmWindow; 
+var shapeControl;
 
 // color sheme
 
@@ -69,6 +70,7 @@ function initialize_google_map(htmlElementId, position, mapType, zoom) {
   load_confirm_selection_dialog();
   load_drawing_manager(map);
   load_selection_control(map);
+  load_shape_control();
   return map;
 }
 
@@ -86,19 +88,19 @@ function load_selection_control(map) {
   }); 
 }
 
-/*
-function load_shape_context_dialog(shapeName, shapeDescription) {
-  var result;
-  $.ajax({
-    url: '/ajax/shapemenu?name=' + shapeName + '&description=' shapeDescription,
-    success function(data) {
-      result = data;
-    },
-    async: false
+function load_shape_control() {
+  $.get('/ajax/shapemenu', function(data) {
+    shapeControl = data;
   });
-  return result;
-} 
-*/
+}
+
+function use_shape_control(name, description, datatype, shapeid) {
+  if(shapeControl) {
+    return shapeControl.replace('NAME',name).replace('DESCRIPTION',description).replace('DATATYPE',datatype).replace('SHAPEID',shapeid);
+  } else {
+    return 'n/a';
+  }
+}
 
 function load_drawing_manager(map) {
   var drawingManager = new google.maps.drawing.DrawingManager({
@@ -245,7 +247,7 @@ function draw_polygon(map, datatype, polygon) {
   google.maps.event.addListener(polygon_def, 'rightclick', function(event) {
     currentPolygon = polygon_def;
    polygonConfirmWindow = new google.maps.InfoWindow({
-     content: '<div class="container"><b>' + polygon['name']  + '</b><br/><em>' + polygon['description'] + '</em><div class="btn-group btn-group-xs"><button class="btn btn-danger" onclick="remove_polygon(&quot;' + datatype + '&quot;,' + polygon['id'] + ')">Remove</button></div></div>'
+     content: use_shape_control(polygon['name'], polygon['description'], datatype, polygon['id'])
    });
    polygonConfirmWindow.setPosition(event.latLng);
    polygonConfirmWindow.open(map);

@@ -9,6 +9,10 @@ from flask import request, render_template
 def ajax_selection_menu():
     return render_template('selection_menu.html')
 
+@app.route('/ajax/shapemenu', methods=['GET'])
+def ajax_shape_menu():
+    return render_template('shape_menu.html')
+
 @app.route('/ajax/staticmenu', methods=['GET'])
 def ajax_static_menu():
     return render_template('static_menu.html')

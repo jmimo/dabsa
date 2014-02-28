@@ -26,6 +26,10 @@ body {
     height: 50px;
   }
 
+  .shapewindow {
+    width: 320px;
+  }
+
   .mapMenuOutline {
     padding: 5px 5px;
   }
