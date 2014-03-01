@@ -9,8 +9,17 @@ class AirspaceFile(Base):
     importDate = Column(DateTime)
     airspaces = relationship('Airspace', backref='file')
 
-    def __repr__(self):
-        return "[id:%s][name:%s][importDate:%s][airspaces:%s]" & (self.id,self.name,self.importDate,len(self.airspaces))
+    def get_id(self):
+        return id
+    
+    @property
+    def serialize(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'importDate': (self.importDate.strftime("%Y-%n-%d %H:%M:%S") if self.importDate != None else None),
+            'airspaces': [airspace.serialize for airspace in self.airspaces]
+        }
 
 class Airspace(Base):
     __tablename__ = "Airspace"
@@ -18,24 +27,44 @@ class Airspace(Base):
     description = Column(String)
     name = Column(String)
     type = Column(String)
+    subtype = Column(String)
     floor = Column(String)
     ceiling = Column(String)
     file_id = Column(Integer, ForeignKey('AirspaceFile.id'))
     points = relationship('Point', backref='airspace')
-    
-    def __repr__(self):
-       return "[id:%s][name:%s][type:%s][floor:%s][ceiling:%s][entries:%s]" % (self.id,self.name,self.type,self.floor,self.ceiling,len(self.entries))
+
+    @property
+    def serialize(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'description': self.description,
+            'type': self.type,
+            'subtype': (self.subtype if self.subtype != None else 'n/a'),
+            'floor': self.floor,
+            'ceiling': self.ceiling,
+            'points': [point.serialize for point in self.points]
+        }
+
 
 class Point(Base):
     __tablename__ = "Point"
     id = Column(Integer, primary_key=True)
-    prefix = Column(String)
+    index = Column(Integer)
     longitude = Column(String)
     longitude_dec = Column(Float)
     latitude = Column(String)
     latitude_dec = Column(Float)
-    index = Column(Integer)
     airspace_id = Column(Integer, ForeignKey('Airspace.id'))
 
-    def __repr__(self):
-       return "[id:%s][index:%s][prefix:%s][longitude:%s][latitude:%s]" % (self.id,self.index,self.prefix,self.longitude,self.latitude)
+    @property
+    def serialize(self):
+        return {
+            'id': self.id,
+            'index': self.index,
+            'longitude': self.longitude,
+            'longitude_dec': self.longitude_dec,
+            'latitude': self.latitude,
+            'latitude_dec': self.latitude_dec
+        }
+

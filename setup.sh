@@ -4,4 +4,4 @@ rm -fR env
 
 virtualenv env
 . env/bin/activate
-pip install flask sqlalchemy
+pip install flask sqlalchemy numpy

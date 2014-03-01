@@ -18,6 +18,7 @@ AIRSPACE_CLASSES = {
     'FF':'FLYING_FIELD',
     'HP':'HELIPORT',
     'BB':'CABLECAR',
+    'BC':'CABLE',
     'HI':'OBSTACLE',
     'GG':'LOCAL_DANGERZONE',
     'SZ':'WILDLIFE_PROTECTION',
@@ -40,7 +41,17 @@ def parse(filename,filepointer):
                 airspaceFile.airspaces.append(airspace)
                 counter = 0
             elif identifier == 'AN':
-                airspace.name = bareline
+                if bareline.startswith('BERGBAHN'):
+                    airspace.subtype = 'CABLECAR'
+                    airspace.name = bareline[9:]
+                elif bareline.startswith('KABEL'):
+                    airspace.subtype = 'CABLE'
+                    airspace.name = bareline[6:]
+                elif bareline.startswith('SCHUTZ'):
+                    airspace.subtype = 'WILDLIFE_PROTECTION'
+                    airspace.name = bareline[7:]
+                else:
+                    airspace.name = bareline
             elif identifier == 'AH':
                 airspace.ceiling = bareline
             elif identifier == 'AL':

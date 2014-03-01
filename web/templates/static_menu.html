@@ -1,0 +1,23 @@
+<div class="mapMenuOutline">
+<div class="container-fluid mapMenu">
+  <div class="row">
+    <div id="selection-show-hide-buttons-div" class="col-xs-12 hide text-center">
+       <h5>Selection</h5>
+       <button id="button-selection-hiding" class="btn btn-primary btn-xs btn-block" data-togglestate="hide" onclick="toggle_selection_button();">Show</button>
+  </div>
+ </div>
+ <div class="row">
+   <div id="cleanup-airspaces" class="col-xs-12 hide text-center">
+     <h5>Airspaces</h5>
+     <button id="button-load-obstacles" class="btn btn-primary btn-xs btn-block ladda-button" data-style="zoom-in" onclick="draw_obstacles_within_current_selection();">
+       <span class="ladda-label">Load Obstacles</span>
+       <span class="ladda-spinner"></span> 
+     </button>
+     <button id="button-load-wildlife" class="btn btn-primary btn-xs btn-block ladda-button" data-style="zoom-in" onclick="draw_wildlife_protection_within_current_selection();">
+       <span class="ladda-label">Load Wildlife Protection</span>
+       <span class="ladda-spinner"></span>
+     </button>
+     <button id="button-cleanup-airspaces" class="btn btn-primary btn-xs btn-block" onclick="remove_all_shapes_from_map('airspace');remove_all_shapes_from_map('obstacle');remove_all_shapes_from_map('wildlife');hide_element('#cleanup-airspaces');">Cleanup</button>
+   </div>
+ </div>
+</div>
