@@ -214,6 +214,7 @@ function load_and_draw_data_for_selection(datatype, selection, callbackdata) {
     var airspaces = JSON.parse(response);
     if(airspaces['airspaces'].length > 0) {
       show_element('#cleanup-airspaces');
+      init_checkboxlist();
     }
     $.each(airspaces['airspaces'], function(key, value) {
       var points = value['points'].length;
@@ -372,28 +373,28 @@ function reset_selection_button() {
 
 // -------------------------------------------------
 
-function init_checklistbox() {
-    $('.checklistitem').each(function () {
-        
-        // Settings
-        var $widget = $(this),
-            $checkbox = $('<input type="checkbox" class="hidden" />'),
-            color = ($widget.data('color') ? $widget.data('color') : "primary"),
-            style = ($widget.data('style') == "button" ? "btn-" : "list-group-item-"),
-            settings = {
-                on: {
-                    icon: 'glyphicon glyphicon-check'
-                },
-                off: {
-                    icon: 'glyphicon glyphicon-unchecked'
-                }
-            };
-            
+function init_checkboxlist() {
+  $('.checklistitem').each(function () {
+    var $widget = $(this),
+        $checkbox = $('<input type="checkbox" class="hidden"/>'),
+        color = ($widget.data('color') ? $widget.data('color') : "primary"),
+        style = ($widget.data('style') == "button" ? "btn-" : "list-group-item-"),
+        settings = {
+            on: {
+                icon: 'glyphicon glyphicon-check'
+            },
+            off: {
+                icon: 'glyphicon glyphicon-unchecked'
+            }
+        };
+	
         $widget.css('cursor', 'pointer')
-        $widget.append($checkbox);
+ 
+	$widget.append($checkbox);
 
         // Event Handlers
         $widget.on('click', function () {
+            // TODO: insert action for loading data   
             $checkbox.prop('checked', !$checkbox.is(':checked'));
             $checkbox.triggerHandler('change');
             updateDisplay();
@@ -401,7 +402,7 @@ function init_checklistbox() {
         $checkbox.on('change', function () {
             updateDisplay();
         });
-          
+
 
         // Actions
         function updateDisplay() {
@@ -413,7 +414,7 @@ function init_checklistbox() {
             // Set the button's icon
             $widget.find('.state-icon')
                 .removeClass()
-                .addClass('state-icon ' + settings[$widget.data('state')].icon);
+                .addClass('pull-left state-icon ' + settings[$widget.data('state')].icon);
 
             // Update the button's color
             if (isChecked) {
@@ -422,31 +423,21 @@ function init_checklistbox() {
                 $widget.removeClass(style + color + ' active');
             }
         }
-
+	
         // Initialization
         function init() {
-            
+
             if ($widget.data('checked') == true) {
                 $checkbox.prop('checked', !$checkbox.is(':checked'));
             }
-            
+
             updateDisplay();
 
             // Inject the icon if applicable
             if ($widget.find('.state-icon').length == 0) {
-                $widget.prepend('<span class="state-icon ' + settings[$widget.data('state')].icon + '"></span>');
+                $widget.prepend('<span class="pull-left state-icon ' + settings[$widget.data('state')].icon + '"></span>');
             }
         }
         init();
-    });
-    
-    $('#get-checked-data').on('click', function(event) {
-        event.preventDefault(); 
-        var checkedItems = {}, counter = 0;
-        $("#check-list-box li.active").each(function(idx, li) {
-            checkedItems[counter] = $(li).text();
-            counter++;
-        });
-        $('#display-json').html(JSON.stringify(checkedItems, null, '\t'));
-    });
+  });
 }

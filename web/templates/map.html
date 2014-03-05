@@ -9,6 +9,5 @@
 <script type="text/javascript" src="{{ url_for('static', filename='dabsa/dabsa.js') }}"></script>
 <script type="text/javascript">
   var map = initialize_google_map('mymap', new google.maps.LatLng({{ home_coordinates[0]  }}, {{ home_coordinates[1] }}) , {{ map_type }}, {{ map_zoom }});
-  init_checklistbox();
 </script>
 {% endblock %}
