@@ -8,7 +8,20 @@
  </div>
  <div class="row">
    <div id="cleanup-airspaces" class="col-xs-12 hide text-center">
-     <h5>Airspaces</h5>
+     <h5>Layer</h5>
+     <ul id="check-list-box" class="list-group checked-list-box">
+       <li class="list-group-item checklistitem">Cras justo odio</li>
+       <li class="list-group-item checklistitem" data-color="success">Dapibus ac facilisis in</li>
+       <li class="list-group-item checklistitem" data-color="info">Morbi leo risus</li>
+       <li class="list-group-item checklistitem" data-color="warning">Porta ac consectetur ac</li>
+       <li class="list-group-item checklistitem" data-color="danger">Vestibulum at eros</li>
+     </ul>
+     <br/>
+     <button class="btn btn-primary btn-xs btn-block" id="get-checked-data">Get Checked Data</button>
+
+
+
+<!--
      <button id="button-load-obstacles" class="btn btn-primary btn-xs btn-block ladda-button" data-style="zoom-in" onclick="draw_obstacles_within_current_selection();">
        <span class="ladda-label">Load Obstacles</span>
        <span class="ladda-spinner"></span> 
@@ -18,6 +31,7 @@
        <span class="ladda-spinner"></span>
      </button>
      <button id="button-cleanup-airspaces" class="btn btn-primary btn-xs btn-block" onclick="remove_all_shapes_from_map('airspace');remove_all_shapes_from_map('obstacle');remove_all_shapes_from_map('wildlife');hide_element('#cleanup-airspaces');">Cleanup</button>
+-->
    </div>
  </div>
 </div>
