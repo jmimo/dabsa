@@ -395,6 +395,18 @@ function init_checkboxlist() {
         // Event Handlers
         $widget.on('click', function () {
             // TODO: insert action for loading data   
+	    var title = $widget.data('alternate-title');
+            if(title) {
+              $widget.data('alternate-title',$widget.text());
+              $widget.text(title);
+	    }
+	    var jsFunction = $widget.data('js-function-to-execute');
+            if(jsFunction) {
+	      var funct = window[jsFunction];
+	      if(typeof funct == 'function') {
+		funct.apply(window);
+	      }
+	    }
             $checkbox.prop('checked', !$checkbox.is(':checked'));
             $checkbox.triggerHandler('change');
             updateDisplay();
