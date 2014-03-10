@@ -354,21 +354,18 @@ function remove_all_shapes(category) {
 // Static menu
 // ################################################
 
-function toggle_selection_button() {
-  if($('#button-selection-hiding').data('togglestate') == 'show') {
-    hide_current_selection();
-    $('#button-selection-hiding').text('Show');
-    $('#button-selection-hiding').data('togglestate','hide');
-  } else if($('#button-selection-hiding').data('togglestate') == 'hide') {
-    show_current_selection();
-    $('#button-selection-hiding').text('Hide');
-    $('#button-selection-hiding').data('togglestate','show');
+function toggle_selection_button(togglestate) {
+  if(togglestate == 'Show') {
+     hide_current_selection();
+  }
+  if(togglestate == 'Hide') {
+     show_current_selection();
   }
 }
 
 function reset_selection_button() {
   $('#button-selection-hiding').text('Show');
-  $('#button-selection-hiding').data('togglestate','hide');
+  $('#button-selection-hiding').data('togglestate','Hide');
 }
 
 // -------------------------------------------------
@@ -396,20 +393,21 @@ function init_checkboxlist() {
         $widget.on('click', function () {
             // TODO: insert action for loading data   
 	    var title = $widget.data('alternate-title');
+            var titleSpan = $widget.find('span.title:first');
             if(title) {
-              $widget.data('alternate-title',$widget.text());
-              $widget.text(title);
+              $widget.data('alternate-title',titleSpan.text());
+              titleSpan.text(title);
 	    }
+             $checkbox.prop('checked', !$checkbox.is(':checked'));
+             $checkbox.triggerHandler('change');
+             updateDisplay();
 	    var jsFunction = $widget.data('js-function-to-execute');
             if(jsFunction) {
 	      var funct = window[jsFunction];
 	      if(typeof funct == 'function') {
-		funct.apply(window);
+		funct.apply(window,[title]);
 	      }
 	    }
-            $checkbox.prop('checked', !$checkbox.is(':checked'));
-            $checkbox.triggerHandler('change');
-            updateDisplay();
         });
         $checkbox.on('change', function () {
             updateDisplay();
