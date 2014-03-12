@@ -364,8 +364,9 @@ function toggle_selection_button(togglestate) {
 }
 
 function reset_selection_button() {
-  $('#button-selection-hiding').text('Show');
-  $('#button-selection-hiding').data('togglestate','Hide');
+  $('#show_selection_button_title').text('Show');
+  $('#show_selection_button_title_list_item').data('alternate-title','Hide');
+  $('#show_selection_button_title_list_item').find('input.hidden').remove();
 }
 
 // -------------------------------------------------
