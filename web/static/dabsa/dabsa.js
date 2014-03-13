@@ -148,7 +148,7 @@ function remove_selection() {
     selection.setMap(null);
   }
   confirmWindow.close();
-  reset_selection_button();  
+  reset_selection_checkbox();  
   hide_element('#selection-show-hide-buttons-div');
 }
 
@@ -213,8 +213,7 @@ function load_and_draw_data_for_selection(datatype, selection, callbackdata) {
   $.post('/ajax/selection/' + datatype, data, function(response) {
     var airspaces = JSON.parse(response);
     if(airspaces['airspaces'].length > 0) {
-      show_element('#cleanup-airspaces');
-      init_checkboxlist();
+      show_element('#airspaces');
     }
     $.each(airspaces['airspaces'], function(key, value) {
       var points = value['points'].length;
@@ -225,6 +224,7 @@ function load_and_draw_data_for_selection(datatype, selection, callbackdata) {
       }
     });
     load_and_draw_data_callback(datatype, callbackdata);
+    reset_airspace_checkboxes(); 
   });
 }
 
@@ -241,6 +241,8 @@ function draw_polygon(map, datatype, polygon) {
     fillColor: selectedColorSheme['fillColor'],
     fillOpacity: selectedColorSheme['fillOpacity']
   });
+  polygon_def.set('airspace_type', polygon['type']);
+  polygon_def.set('airspace_subtype', polygon['subtype']);
   polygon_def.set('type', 'polygon');
   polygon_def.set('identifier', polygon['id']);
   polygon_def.setMap(map);
@@ -295,12 +297,23 @@ function create_coordinate_array(drawingObject) {
   return coords;
 }
 
-function remove_all_shapes_from_map(qualifier) {
+function remove_all_shapes_from_map(qualifier, type) {
   var shapes = retrieve_all_shapes(qualifier);
-  if (shapes != null) {
+  if (shapes) {
     $.each(shapes, function(key, value) {
-      if(value) {
+      if(value != null && value['airspace_type'] == type) {
         value.setMap(null);
+      }
+    });
+  }
+}
+
+function show_all_shapes_on_map(qualifier, type) {
+  var shapes = retrieve_all_shapes(qualifier);
+  if(shapes) {
+    $.each(shapes, function(key, value) {
+      if(value != null && value['airspace_type'] == type) {
+        value.setMap(map);
       }
     });
   }
@@ -354,101 +367,58 @@ function remove_all_shapes(category) {
 // Static menu
 // ################################################
 
-function toggle_selection_button(togglestate) {
-  if(togglestate == 'Show') {
-     hide_current_selection();
-  }
-  if(togglestate == 'Hide') {
-     show_current_selection();
+function toggle_selection() {
+  if($('#toggle-selection-checkbox').is(':checked')) {
+    if(retrieve_shape('selection', 'current')) {
+        show_current_selection();
+    } else {
+      $('#toggle-selection-checkbox').prop('checked', false);
+    }
+  } else {
+    hide_current_selection();
   }
 }
 
-function reset_selection_button() {
-  $('#show_selection_button_title').text('Show');
-  $('#show_selection_button_title_list_item').data('alternate-title','Hide');
-  $('#show_selection_button_title_list_item').find('input.hidden').remove();
+function reset_selection_checkbox() {
+ $('#toggle-selection-checkbox').prop('checked', false);
 }
 
-// -------------------------------------------------
+function toggle_airspace(elementid, qualifier, types) {
+  if($('#' + elementid).is(':checked')) {
+    types.forEach(function(type) {
+      show_all_shapes_on_map(qualifier, type);
+    });
+  } else {
+    types.forEach(function(type) {
+      remove_all_shapes_from_map(qualifier, type);
+    });
+  }
+}
 
-function init_checkboxlist() {
-  $('.checklistitem').each(function () {
-    var $widget = $(this),
-        $checkbox = $('<input type="checkbox" class="hidden"/>'),
-        color = ($widget.data('color') ? $widget.data('color') : "primary"),
-        style = ($widget.data('style') == "button" ? "btn-" : "list-group-item-"),
-        settings = {
-            on: {
-                icon: 'glyphicon glyphicon-check'
-            },
-            off: {
-                icon: 'glyphicon glyphicon-unchecked'
-            }
-        };
-	
-        $widget.css('cursor', 'pointer')
- 
-	$widget.append($checkbox);
-
-        // Event Handlers
-        $widget.on('click', function () {
-            // TODO: insert action for loading data   
-	    var title = $widget.data('alternate-title');
-            var titleSpan = $widget.find('span.title:first');
-            if(title) {
-              $widget.data('alternate-title',titleSpan.text());
-              titleSpan.text(title);
-	    }
-             $checkbox.prop('checked', !$checkbox.is(':checked'));
-             $checkbox.triggerHandler('change');
-             updateDisplay();
-	    var jsFunction = $widget.data('js-function-to-execute');
-            if(jsFunction) {
-	      var funct = window[jsFunction];
-	      if(typeof funct == 'function') {
-		funct.apply(window,[title]);
-	      }
-	    }
-        });
-        $checkbox.on('change', function () {
-            updateDisplay();
-        });
-
-
-        // Actions
-        function updateDisplay() {
-            var isChecked = $checkbox.is(':checked');
-
-            // Set the button's state
-            $widget.data('state', (isChecked) ? "on" : "off");
-
-            // Set the button's icon
-            $widget.find('.state-icon')
-                .removeClass()
-                .addClass('pull-left state-icon ' + settings[$widget.data('state')].icon);
-
-            // Update the button's color
-            if (isChecked) {
-                $widget.addClass(style + color + ' active');
-            } else {
-                $widget.removeClass(style + color + ' active');
-            }
+function reset_airspace_checkboxes() {
+  $('.airspace_selector').prop('checked', false);
+  var types = [];
+  var shapes = retrieve_all_shapes('airspace');
+  if(shapes) {
+    $.each(shapes, function(key, value) {
+      if(value) {
+        if(types.indexOf(value['airspace_type']) < 0) {
+          types.push(value['airspace_type']);
         }
-	
-        // Initialization
-        function init() {
-
-            if ($widget.data('checked') == true) {
-                $checkbox.prop('checked', !$checkbox.is(':checked'));
-            }
-
-            updateDisplay();
-
-            // Inject the icon if applicable
-            if ($widget.find('.state-icon').length == 0) {
-                $widget.prepend('<span class="pull-left state-icon ' + settings[$widget.data('state')].icon + '"></span>');
-            }
-        }
-        init();
+      }
+    });
+  }
+  types.forEach(function(type) {
+    if(type == 'CTR') {
+      $('#toggle-ctr-checkbox').prop('checked', true);
+    } else if(type == 'CLASS_C' | type == 'CLASS_D' | type == 'CLASS_E') {
+      $('#toggle-tma-checkbox').prop('checked', true);
+    } else if(type == 'PROHIBITED') {
+      $('#toggle-prohibited-checkbox').prop('checked', true);
+    } else if(type == 'RESTRICTED') {
+      $('#toggle-restricted-checkbox').prop('checked', true);
+    } else if(type == 'DANGER') {
+      $('#toggle-danger-checkbox').prop('checked', true);
+    }
   });
 }

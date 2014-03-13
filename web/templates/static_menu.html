@@ -3,21 +3,52 @@
   <div class="row">
     <div id="selection-show-hide-buttons-div" class="col-xs-12 hide">
        <h5 class="text-center">Selection</h5>
-	<ul class="list-group checked-list-box">
-          <li id="show_selection_button_title_list_item" class="list-group-item checklistitem" data-alternate-title="Hide" data-js-function-to-execute="toggle_selection_button"><span id="show_selection_button_title" class="title">Show</span></li>
-	</ul>
+	<div class="form-group checkbox">
+	  <label>
+	    <input id="toggle-selection-checkbox" type="checkbox" onclick="toggle_selection();">Show Selection</input>
+	  </label>
+	</div>
   </div>
  </div>
  <div class="row">
-   <div id="cleanup-airspaces" class="col-xs-12 hide">
-     <h5 class="text-center">Layer</h5>
-     <ul id="check-list-box" class="list-group checked-list-box">
-       <li class="list-group-item checklistitem">CTR</li>
-       <li class="list-group-item checklistitem">TMA</li>
-       <li class="list-group-item checklistitem">AWY</li>
-       <li class="list-group-item checklistitem">Obstacles</span></li>
-       <li class="list-group-item checklistitem">Wildlife Protection</li>
-     </ul>
+   <div id="airspaces" class="col-xs-12 hide">
+     <h5 class="text-center">Airspaces</h5>
+     <div class="form-group checkbox">
+       <label>
+         <input id="toggle-ctr-checkbox" class="airspace_selector" type="checkbox" onclick="toggle_airspace('toggle-ctr-checkbox','airspace',['CTR']);">CTR</input>
+       </label>
+     </div>
+     <div class="form-group checkbox">
+       <label>
+         <input id="toggle-tma-checkbox" class="airspace_selector" type="checkbox" onclick="toggle_airspace('toggle-tma-checkbox','airspace',['CLASS_C','CLASS_D','CLASS_E']);">TMA</input>
+       </label>
+     </div>
+     <div class="form-group checkbox">
+       <label>
+         <input id="toggle-restricted-checkbox" class="airspace_selector" type="checkbox" onclick="toggle_airspace('toggle-restricted-checkbox','airspace',['RESTRICTED']);">Restricted</input>
+       </label>
+     </div>
+     <div class="form-group checkbox">
+       <label>
+         <input id="toggle-prohibited-checkbox" class="airspace_selector" type="checkbox" onclick="toggle_airspace('toggle-prohibited-checkbox','airspace',['PROHIBITED']);">Prohibited</input>
+       </label>
+     </div>
+     <div class="form-group checkbox">
+       <label>
+         <input id="toggle-danger-checkbox" class="airspace_selector" type="checkbox" onclick="toggle_airspace('toggle-danger-checkbox','airspace',['DANGER']);">Danger</input>
+       </label>
+     </div>
+     <h5 class="text-center">Additionals</h5>
+     <div class="form-group checkbox">
+       <label>
+         <input type="checkbox">Obstacle</input>
+       </label>
+     </div>
+     <div class="form-group checkbox">
+       <label>
+         <input type="checkbox">Wildlife Protection</input>
+       </label>
+     </div>
    </div>
  </div>
 </div>
