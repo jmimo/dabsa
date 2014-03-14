@@ -169,29 +169,10 @@ function show_current_selection() {
 }
 
 function draw_airspaces_within_current_selection() {
-  //TODO: decide whether we want to provide the same logic for additions. In other words do we want to handle additions separate from airspaces all together?
   remove_all_shapes_from_map('airspace',null);
   remove_all_shapes('airspace');
   load_and_draw_data_for_selection('airspace', retrieve_shape('selection', 'current'), null);
 }
-
-/*
-function draw_obstacles_within_current_selection() {
-  var ladda_button = Ladda.create(document.querySelector('#button-load-obstacles'));
-  ladda_button.start();
-  remove_all_shapes_from_map('obstacle',null);
-  remove_all_shapes('obstacle');
-  load_and_draw_data_for_selection('obstacle', retrieve_shape('selection', 'current'), ladda_button);
-}
-
-function draw_wildlife_protection_within_current_selection() {
-  var ladda_button = Ladda.create(document.querySelector('#button-load-wildlife'));
-  ladda_button.start();
-  remove_all_shapes_from_map('wildlife',null);
-  remove_all_shapes('wildlife');
-  load_and_draw_data_for_selection('wildlife', retrieve_shape('selection', 'current'), ladda_button);
-}
-*/
 
 function load_and_draw_data_callback(datatype, callbackdata) {
   if(datatype == 'airspace') {
@@ -488,6 +469,6 @@ function reset_additions_section() {
   }
   $('#additions-load-button').tooltip({
     'placement': 'bottom',
-    'title': 'Loading Additional Data can take up to 2 minutes!'
+    'title': 'Loading additional data can take up to 2 minutes!'
   });
 }
