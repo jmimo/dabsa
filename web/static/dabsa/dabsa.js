@@ -239,11 +239,14 @@ function draw_polygon(map, datatype, polygon) {
   store_shape(datatype, polygon['id'], polygon_def);
   google.maps.event.addListener(polygon_def, 'rightclick', function(event) {
     currentPolygon = polygon_def;
-   polygonConfirmWindow = new google.maps.InfoWindow({
-     content: use_shape_control(polygon['name'], polygon['description'], datatype, polygon['id'])
-   });
-   polygonConfirmWindow.setPosition(event.latLng);
-   polygonConfirmWindow.open(map);
+    if(polygonConfirmWindow) {
+      polygonConfirmWindow.close();
+    }
+    polygonConfirmWindow = new google.maps.InfoWindow({
+      content: use_shape_control(polygon['name'], polygon['description'], datatype, polygon['id'])
+    });
+    polygonConfirmWindow.setPosition(event.latLng);
+    polygonConfirmWindow.open(map);
   });
 }
 
@@ -266,6 +269,7 @@ function remove_polygon(datatype, polygonid) {
   }
   if(polygonConfirmWindow) {
     polygonConfirmWindow.close();
+    polygonConfirmWindow = null;
   }
 }
 
