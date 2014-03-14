@@ -148,7 +148,7 @@ function remove_selection() {
     selection.setMap(null);
   }
   confirmWindow.close();
-  reset_selection_button();  
+  reset_selection_checkbox();  
   hide_element('#selection-show-hide-buttons-div');
 }
 
@@ -169,23 +169,29 @@ function show_current_selection() {
 }
 
 function draw_airspaces_within_current_selection() {
-  remove_all_shapes_from_map('airspace');
+  //TODO: decide whether we want to provide the same logic for additions. In other words do we want to handle additions separate from airspaces all together?
+  remove_all_shapes_from_map('airspace',null);
+  remove_all_shapes('airspace');
   load_and_draw_data_for_selection('airspace', retrieve_shape('selection', 'current'), null);
 }
 
+/*
 function draw_obstacles_within_current_selection() {
   var ladda_button = Ladda.create(document.querySelector('#button-load-obstacles'));
   ladda_button.start();
-  remove_all_shapes_from_map('obstacle');
+  remove_all_shapes_from_map('obstacle',null);
+  remove_all_shapes('obstacle');
   load_and_draw_data_for_selection('obstacle', retrieve_shape('selection', 'current'), ladda_button);
 }
 
 function draw_wildlife_protection_within_current_selection() {
   var ladda_button = Ladda.create(document.querySelector('#button-load-wildlife'));
   ladda_button.start();
-  remove_all_shapes_from_map('wildlife');
+  remove_all_shapes_from_map('wildlife',null);
+  remove_all_shapes('wildlife');
   load_and_draw_data_for_selection('wildlife', retrieve_shape('selection', 'current'), ladda_button);
 }
+*/
 
 function load_and_draw_data_callback(datatype, callbackdata) {
   if(datatype == 'airspace') {
@@ -195,11 +201,13 @@ function load_and_draw_data_callback(datatype, callbackdata) {
   if(datatype == 'obstacle') {
      if(callbackdata) {
        callbackdata.stop();
+       reset_additions_section(); 
      }
   } 
   if(datatype == 'wildlife') {
     if(callbackdata) {
       callbackdata.stop();
+      reset_additions_section();
     }
   }
 }
@@ -213,7 +221,7 @@ function load_and_draw_data_for_selection(datatype, selection, callbackdata) {
   $.post('/ajax/selection/' + datatype, data, function(response) {
     var airspaces = JSON.parse(response);
     if(airspaces['airspaces'].length > 0) {
-      show_element('#cleanup-airspaces');
+      show_element('#airspaces');
     }
     $.each(airspaces['airspaces'], function(key, value) {
       var points = value['points'].length;
@@ -224,6 +232,8 @@ function load_and_draw_data_for_selection(datatype, selection, callbackdata) {
       }
     });
     load_and_draw_data_callback(datatype, callbackdata);
+    reset_airspace_checkboxes(); 
+    reset_additions_section();
   });
 }
 
@@ -240,6 +250,8 @@ function draw_polygon(map, datatype, polygon) {
     fillColor: selectedColorSheme['fillColor'],
     fillOpacity: selectedColorSheme['fillOpacity']
   });
+  polygon_def.set('airspace_type', polygon['type']);
+  polygon_def.set('airspace_subtype', polygon['subtype']);
   polygon_def.set('type', 'polygon');
   polygon_def.set('identifier', polygon['id']);
   polygon_def.setMap(map);
@@ -294,12 +306,29 @@ function create_coordinate_array(drawingObject) {
   return coords;
 }
 
-function remove_all_shapes_from_map(qualifier) {
+function remove_all_shapes_from_map(qualifier, type) {
   var shapes = retrieve_all_shapes(qualifier);
-  if (shapes != null) {
+  if (shapes) {
     $.each(shapes, function(key, value) {
       if(value) {
-        value.setMap(null);
+        if(type && value['airspace_type'] == type) {
+          value.setMap(null);
+        } else if(type == null) {
+          value.setMap(null);
+        }
+      }
+    });
+  }
+}
+
+function show_all_shapes_on_map(qualifier, type) {
+  var shapes = retrieve_all_shapes(qualifier);
+  if(shapes) {
+    $.each(shapes, function(key, value) {
+      if(value != null && value['airspace_type'] == type) {
+        value.setMap(map);
+      } else if(type == null) {
+        value.setMap(map);
       }
     });
   }
@@ -353,19 +382,112 @@ function remove_all_shapes(category) {
 // Static menu
 // ################################################
 
-function toggle_selection_button() {
-  if($('#button-selection-hiding').data('togglestate') == 'show') {
+function toggle_selection() {
+  if($('#toggle-selection-checkbox').is(':checked')) {
+    if(retrieve_shape('selection', 'current')) {
+        show_current_selection();
+    } else {
+      $('#toggle-selection-checkbox').prop('checked', false);
+    }
+  } else {
     hide_current_selection();
-    $('#button-selection-hiding').text('Show');
-    $('#button-selection-hiding').data('togglestate','hide');
-  } else if($('#button-selection-hiding').data('togglestate') == 'hide') {
-    show_current_selection();
-    $('#button-selection-hiding').text('Hide');
-    $('#button-selection-hiding').data('togglestate','show');
   }
 }
 
-function reset_selection_button() {
-  $('#button-selection-hiding').text('Show');
-  $('#button-selection-hiding').data('togglestate','hide');
+function reset_selection_checkbox() {
+ $('#toggle-selection-checkbox').prop('checked', false);
+}
+
+function toggle_airspace_or_addition(elementid, qualifier, types) {
+  if($('#' + elementid).is(':checked')) {
+    if(types != null && types.length > 0) {
+      types.forEach(function(type) {
+        show_all_shapes_on_map(qualifier, type);
+      });
+    } else {
+      show_all_shapes_on_map(qualifier, null);
+    }
+  } else {
+    if(types != null && types.length > 0) {
+      types.forEach(function(type) {
+        remove_all_shapes_from_map(qualifier, type);
+      });
+    } else {
+      remove_all_shapes_from_map(qualifier, null);
+    }
+  }
+}
+
+function reset_airspace_checkboxes() {
+  $('.airspace_selector').prop('checked', false);
+  var types = [];
+  var shapes = retrieve_all_shapes('airspace');
+  if(shapes) {
+    $.each(shapes, function(key, value) {
+      if(value) {
+        if(types.indexOf(value['airspace_type']) < 0) {
+          types.push(value['airspace_type']);
+        }
+      }
+    });
+  }
+  types.forEach(function(type) {
+    if(type == 'CTR') {
+      $('#toggle-ctr-checkbox').prop('checked', true);
+    } else if(type == 'CLASS_C' | type == 'CLASS_D' | type == 'CLASS_E') {
+      $('#toggle-tma-checkbox').prop('checked', true);
+    } else if(type == 'PROHIBITED') {
+      $('#toggle-prohibited-checkbox').prop('checked', true);
+    } else if(type == 'RESTRICTED') {
+      $('#toggle-restricted-checkbox').prop('checked', true);
+    } else if(type == 'DANGER') {
+      $('#toggle-danger-checkbox').prop('checked', true);
+    }
+  });
+}
+
+function load_additions() {
+  var ladda_button = Ladda.create(document.querySelector('#additions-load-button'));
+  ladda_button.start();
+  remove_all_shapes_from_map('obstacle',null);
+  remove_all_shapes('obstacle');
+  remove_all_shapes_from_map('wildlife',null);
+  remove_all_shapes('wildlife');
+  load_and_draw_data_for_selection('obstacle', retrieve_shape('selection', 'current'), null);
+  load_and_draw_data_for_selection('wildlife', retrieve_shape('selection', 'current'), ladda_button);
+}
+
+function remove_additions() {
+  remove_all_shapes_from_map('obstacle',null);
+  remove_all_shapes('obstacle');
+  remove_all_shapes_from_map('wildlife',null);
+  remove_all_shapes('wildlife');
+  reset_additions_section();
+}
+
+function reset_additions_section() {
+  $('.airspace_additions').prop('checked', false);
+  var hasAdditions = false;   
+  var obstacles = retrieve_all_shapes('obstacle');
+  if(obstacles && Object.keys(obstacles).length > 0) {
+    $('#toggle-obstacles-checkbox').prop('checked', true);
+    hasAdditions = true;
+  }
+  var wildlife = retrieve_all_shapes('wildlife');
+  if(wildlife && Object.keys(wildlife).length > 0) {
+    $('#toggle-wildlife-checkbox').prop('checked', true);
+    hasAdditions = true;
+  }
+
+  if(hasAdditions) {
+    hide_element('#additions-load-button-div');
+    show_element('#additions-checkboxes-div');
+  } else {
+    hide_element('#additions-checkboxes-div');
+    show_element('#additions-load-button-div');
+  }
+  $('#additions-load-button').tooltip({
+    'placement': 'bottom',
+    'title': 'Loading Additional Data can take up to 2 minutes!'
+  });
 }
