@@ -169,11 +169,13 @@ function show_current_selection() {
 }
 
 function draw_airspaces_within_current_selection() {
+  //TODO: decide whether we want to provide the same logic for additions. In other words do we want to handle additions separate from airspaces all together?
   remove_all_shapes_from_map('airspace',null);
   remove_all_shapes('airspace');
   load_and_draw_data_for_selection('airspace', retrieve_shape('selection', 'current'), null);
 }
 
+/*
 function draw_obstacles_within_current_selection() {
   var ladda_button = Ladda.create(document.querySelector('#button-load-obstacles'));
   ladda_button.start();
@@ -189,6 +191,7 @@ function draw_wildlife_protection_within_current_selection() {
   remove_all_shapes('wildlife');
   load_and_draw_data_for_selection('wildlife', retrieve_shape('selection', 'current'), ladda_button);
 }
+*/
 
 function load_and_draw_data_callback(datatype, callbackdata) {
   if(datatype == 'airspace') {
@@ -198,11 +201,13 @@ function load_and_draw_data_callback(datatype, callbackdata) {
   if(datatype == 'obstacle') {
      if(callbackdata) {
        callbackdata.stop();
+       reset_additions_section(); 
      }
   } 
   if(datatype == 'wildlife') {
     if(callbackdata) {
       callbackdata.stop();
+      reset_additions_section();
     }
   }
 }
@@ -228,6 +233,7 @@ function load_and_draw_data_for_selection(datatype, selection, callbackdata) {
     });
     load_and_draw_data_callback(datatype, callbackdata);
     reset_airspace_checkboxes(); 
+    reset_additions_section();
   });
 }
 
@@ -321,6 +327,8 @@ function show_all_shapes_on_map(qualifier, type) {
     $.each(shapes, function(key, value) {
       if(value != null && value['airspace_type'] == type) {
         value.setMap(map);
+      } else if(type == null) {
+        value.setMap(map);
       }
     });
   }
@@ -390,15 +398,23 @@ function reset_selection_checkbox() {
  $('#toggle-selection-checkbox').prop('checked', false);
 }
 
-function toggle_airspace(elementid, qualifier, types) {
+function toggle_airspace_or_addition(elementid, qualifier, types) {
   if($('#' + elementid).is(':checked')) {
-    types.forEach(function(type) {
-      show_all_shapes_on_map(qualifier, type);
-    });
+    if(types != null && types.length > 0) {
+      types.forEach(function(type) {
+        show_all_shapes_on_map(qualifier, type);
+      });
+    } else {
+      show_all_shapes_on_map(qualifier, null);
+    }
   } else {
-    types.forEach(function(type) {
-      remove_all_shapes_from_map(qualifier, type);
-    });
+    if(types != null && types.length > 0) {
+      types.forEach(function(type) {
+        remove_all_shapes_from_map(qualifier, type);
+      });
+    } else {
+      remove_all_shapes_from_map(qualifier, null);
+    }
   }
 }
 
@@ -427,5 +443,51 @@ function reset_airspace_checkboxes() {
     } else if(type == 'DANGER') {
       $('#toggle-danger-checkbox').prop('checked', true);
     }
+  });
+}
+
+function load_additions() {
+  var ladda_button = Ladda.create(document.querySelector('#additions-load-button'));
+  ladda_button.start();
+  remove_all_shapes_from_map('obstacle',null);
+  remove_all_shapes('obstacle');
+  remove_all_shapes_from_map('wildlife',null);
+  remove_all_shapes('wildlife');
+  load_and_draw_data_for_selection('obstacle', retrieve_shape('selection', 'current'), null);
+  load_and_draw_data_for_selection('wildlife', retrieve_shape('selection', 'current'), ladda_button);
+}
+
+function remove_additions() {
+  remove_all_shapes_from_map('obstacle',null);
+  remove_all_shapes('obstacle');
+  remove_all_shapes_from_map('wildlife',null);
+  remove_all_shapes('wildlife');
+  reset_additions_section();
+}
+
+function reset_additions_section() {
+  $('.airspace_additions').prop('checked', false);
+  var hasAdditions = false;   
+  var obstacles = retrieve_all_shapes('obstacle');
+  if(obstacles && Object.keys(obstacles).length > 0) {
+    $('#toggle-obstacles-checkbox').prop('checked', true);
+    hasAdditions = true;
+  }
+  var wildlife = retrieve_all_shapes('wildlife');
+  if(wildlife && Object.keys(wildlife).length > 0) {
+    $('#toggle-wildlife-checkbox').prop('checked', true);
+    hasAdditions = true;
+  }
+
+  if(hasAdditions) {
+    hide_element('#additions-load-button-div');
+    show_element('#additions-checkboxes-div');
+  } else {
+    hide_element('#additions-checkboxes-div');
+    show_element('#additions-load-button-div');
+  }
+  $('#additions-load-button').tooltip({
+    'placement': 'bottom',
+    'title': 'Loading Additional Data can take up to 2 minutes!'
   });
 }
