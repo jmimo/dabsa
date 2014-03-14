@@ -12,7 +12,7 @@ var colorSheme = {
   defaultSheme: {
     strokeColor: '#FF0000',
     strokeOpacity: 0.8,
-    strokeWeight: 2,
+    strokeWeight:  1,
     fillColor: '#FF0000',
     fillOpacity: 0.35
   },
@@ -26,28 +26,28 @@ var colorSheme = {
   restricted: {
     strokeColor: '#FF6600',
     strokeOpacity: 0.8,
-    strokeWeight: 2,
+    strokeWeight:  0.8,
     fillColor: '#FF6600',
     fillOpacity: 0.35
   },
   wildlife: {
     strokeColor: '#00CC00',
     strokeOpacity: 0.8,
-    strokeWeight: 2,
+    strokeWeight:  0.8,
     fillColor: '#00CC00',
     fillOpacity: 0.35
   },
   danger: {
     strokeColor: '#FF0000',
     strokeOpacity: 0.8,
-    strokeWeight: 2,
+    strokeWeight:  0.8,
     fillColor: '#FF0000',
     fillOpacity: 0.35
   },
   ctr: {
     strokeColor: '#3300FF',
     strokeOpacity: 0.8,
-    strokeWeight: 2,
+    strokeWeight:  0.8,
     fillColor: '#3300FF',
     fillOpacity: 0.35
   }
