@@ -1,7 +1,8 @@
 import argparse
 import re
-import datetime
+from datetime import datetime
 from model import AirspaceFile, Airspace, Point
+import dlog
 
 AIRSPACE_CLASSES = {
     'R':'RESTRICTED',
@@ -27,9 +28,11 @@ AIRSPACE_CLASSES = {
 
 AIRSPACE_CLASSES_REF = dict((v,k) for k,v in AIRSPACE_CLASSES.iteritems())
 
+logger = dlog.get_logger('openair-parser')
+
 def parse(filename,filepointer):
     rows = filepointer.readlines()
-    airspaceFile = AirspaceFile(name=filename,importDate=datetime.datetime.now())
+    airspaceFile = AirspaceFile(name=filename, importDate=datetime.now())
     counter = 0
     previousLine = ''
     for line in rows:
@@ -53,8 +56,10 @@ def parse(filename,filepointer):
                 else:
                     airspace.name = bareline
             elif identifier == 'AH':
+                #airspace.ceiling = int(bareline.replace('GND', '0').replace('ft', '').strip())
                 airspace.ceiling = bareline
             elif identifier == 'AL':
+                #airspace.floor = int(bareline.replace('GND', '0').replace('ft', '').strip())
                 airspace.floor = bareline
             elif identifier == 'DP':
                point = Point(index=counter)

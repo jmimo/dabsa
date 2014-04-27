@@ -4,6 +4,9 @@ import shapely.geometry
 from numpy import array
 from model import Airspace, Point
 from flask import request, render_template
+import dlog
+
+logger = dlog.get_logger('ajax-controller')
 
 @app.route('/ajax/selectionmenu', methods=['GET'])
 def ajax_selection_menu():
@@ -39,14 +42,20 @@ def ajax_evaluate(qualifier):
     elif qualifier == 'wildlife':
 	query = db.query(Point).join(Point.airspace).filter(Airspace.subtype == 'WILDLIFE_PROTECTION')
 
+    logger.debug('starting database query for all relevant points')
     dbpoints = query.all()
+    logger.debug('received database result from point query')
 
+    logger.debug('starting in polygon algorithm with selected points')
     airspaces = find_all_airspaces_inside_selected_polygon(dbpoints,points)
+    logger.debug('evaluated all relevant airspaces and found %s' % len(airspaces))
 
+    logger.debug('starting marshalling of airspaces to JSON format')
     length = len(airspaces) - 1
     response = '{"airspaces":['
     response += ''.join([add_separator_if_necessary(length == index,airspace) for index, airspace in enumerate(airspaces)])
     response += ']}'
+    logger.debug('finished marshalling and sending response to browser')
     return response.replace("u'",'"').replace("'", '"')
 
 def find_all_airspaces_inside_selected_polygon(points,polypoints):

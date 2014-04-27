@@ -41,3 +41,4 @@ env
 .DS_Store
 dabsa.db
 *.swp
+*.log

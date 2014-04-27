@@ -4,7 +4,7 @@ from flask import request
 from database import db
 from openair import parse
 from model import AirspaceFile
-
+import dlog
 
 class ImportView(BaseView):
     methods = ['GET', 'POST']
@@ -13,12 +13,24 @@ class ImportView(BaseView):
         return 'import.html'
     
     def dispatch_request(self):
+
+        logger = dlog.get_logger('imp0rt')
+
         if request.method == 'POST':
             importfile = request.files['airspace']
             if importfile:
+                logger.info('parsing file')
                 airspaceFile = parse(importfile.filename,importfile)
-                db.add(airspaceFile)
-                db.commit()
+                logger.info('file parsed')
+                try:
+                    db.add(airspaceFile)
+                    logger.info('added airspaces to database')
+                    db.commit()
+                    logger.info('commited data')
+                except Exception as e:
+                    logger.error(e.message)
+                    logger.info(e)
+                    raise
 
         model = self.get_objects()
         model['files'] = AirspaceFile.query.all()
