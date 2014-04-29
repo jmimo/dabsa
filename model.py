@@ -73,7 +73,9 @@ class Point(Base):
 class Track(Base):
     __tablename__ = "Track"
     id = Column(Integer, primary_key=True)
-    name = Column(String)
+    name = Column(String(512))
+    pilot = Column(String(512))
+    glider = Column(String(512))
     date = Column(DateTime)
     points = relationship('TrackPoint', backref='track') 
 
@@ -82,6 +84,8 @@ class Track(Base):
         return {
             'id': str(self.id),
             'name': self.name,
+            'pilot': self.pilot,
+            'glider': self.glider,
             'trackDate': (self.importDate.strftime("%Y-%n-%d %H:%M:%S") if self.importDate != None else None),
             'trackpoints': [point.serialize for point in self.points]
         }
