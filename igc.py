@@ -12,7 +12,10 @@ def igcparse(filename,filepointer):
         if(identifier == 'H'):
             if(line[:5] == 'HFDTE'):
                 track.date = datetime.strptime(line[5:11], '%d%m%y')
-
+            if(line[:10] == 'HFPLTPILOT'): 
+                track.pilot = line[11:]
+            if(line[:15] == 'HFGTYGLIDERTYPE'):
+                track.glider = line[16:]
         if(identifier == 'B'):
             point = TrackPoint(index=counter)
             counter += 1
