@@ -3,10 +3,10 @@ from datetime import datetime
 from model import Track, TrackPoint
 
 
-def igcparse(filename,filepointer):
+def igcparse(filename,filepointer,date):
     rows = filepointer.readlines()
     counter = 0;
-    track = Track(name=filename)
+    track = Track(name=filename, importDate=date)
     for line in rows:
         identifier = line[:1]
         if(identifier == 'H'):

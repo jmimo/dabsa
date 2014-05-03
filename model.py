@@ -76,7 +76,7 @@ class Track(Base):
     name = Column(String(512))
     pilot = Column(String(512))
     glider = Column(String(512))
-    date = Column(DateTime)
+    importDate = Column(DateTime)
     points = relationship('TrackPoint', backref='track') 
 
     @property
