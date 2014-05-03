@@ -4,7 +4,9 @@ from flask import request
 from flask.ext.login import login_required
 from database import db
 from openair import parse
-from model import AirspaceFile
+from igc import igcparse
+from datetime import datetime
+from model import AirspaceFile, Track
 import dlog
 
 class ImportView(BaseView):
@@ -19,10 +21,10 @@ class ImportView(BaseView):
         logger = dlog.get_logger('imp0rt')
 
         if request.method == 'POST':
-            importfile = request.files['airspace']
-            if importfile:
+            airspace_file = request.files['airspace']
+            if airspace_file:
                 logger.info('parsing file')
-                airspaceFile = parse(importfile.filename,importfile)
+                airspaceFile = parse(airspace_file.filename,airspace_file,datetime.now())
                 logger.info('file parsed')
                 try:
                     db.add(airspaceFile)
@@ -33,9 +35,22 @@ class ImportView(BaseView):
                     logger.error(e.message)
                     logger.info(e)
                     raise
+            track_file = request.files['track']
+            if track_file:
+                logger.info('importing track')
+                track = igcparse(track_file.filename,track_file,datetime.now())
+                logger.debug('parsed igc file: %s' % track_file.filename)
+                try:
+                    db.add(track)
+                    db.commit()
+                except Exception as e:
+                    logger.error(e.message)
+                    logger.info(e)
+                    raise
 
         model = self.get_objects()
         model['files'] = AirspaceFile.query.all()
+        model['tracks'] = Track.query.all()
         return self.render_template(model)
 
 
