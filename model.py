@@ -2,6 +2,29 @@ from database import Base
 from sqlalchemy import Column, Integer, Float, String, DateTime, ForeignKey
 from sqlalchemy.orm import relationship, backref
 
+class User(Base):
+    __tablename__ = "user"
+    id = Column('id',Integer , primary_key=True)
+    username = Column('username', String(256), unique=True , index=True)
+    password = Column('password' , String(256))
+    email = Column('email',String(256),unique=True , index=True)
+    registered_on = Column('registered_on' , DateTime)
+
+    def is_authenticated(self):
+        return True
+ 
+    def is_active(self):
+        return True
+ 
+    def is_anonymous(self):
+        return False
+ 
+    def get_id(self):
+        return unicode(self.id)
+ 
+    def __repr__(self):
+        return '<User %r>' % (self.username)
+
 class AirspaceFile(Base):
     __tablename__ = "AirspaceFile"
     id = Column(Integer, primary_key=True)
