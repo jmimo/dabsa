@@ -1,11 +1,8 @@
 {% extends "layout.html" %}
 {% block content %}
 <div class="padded">
-<div class="row">
-  <div class="col-lg-6">
-
-<form action="" method=post class="form-horizontal">
-    <h2>Signin to FlaskLogin(Todo) Application </h2>
+<form action="" method=post class="form-signin">
+    <h2>Login to DABSA</h2>
     <div class="control-group">
         <div class="controls">
           <input type="text" id="username" name="username" class="input-xlarge"
@@ -26,21 +23,5 @@
         </div>
     </div>
   </form>
-
-
-
-<!--
-    <form class="form-inline" method="POST" enctype="multipart/form-data" action="/login">
-    <div class="form-group">
-        <label for="login">login:</label>
-        <input type="input" id="login" name="login"/>
-        <label for="password">password:</label>
-        <input type="password" id="password"/> 
-    </div>
-    <button type="submit" class="btn btn-default">submit</button>
-  </form>
--->
-  </div>
-</div>
 </div>
 {% endblock %}

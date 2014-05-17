@@ -20,7 +20,7 @@ class LoginView(BaseView):
                 login_user(registered_user)
                 flash("Logged in successfully.")
                 return redirect(request.args.get("next") or url_for("mapview"))
-            return render_template("login.html", form=form)
+            return self.render_template(model)
 
         return self.render_template(model)
 

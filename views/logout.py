@@ -8,11 +8,11 @@ class LogoutView(BaseView):
     methods = ['GET']
 
     def get_template_name(self):
-        return 'logout.html'
+        return None
 
     def dispatch_request(self):
         model = self.get_objects()
         logout_user()
-        return self.render_template(model)
+        return redirect('/')
 
 app.add_url_rule('/logout', view_func=LogoutView.as_view('logoutview'))
