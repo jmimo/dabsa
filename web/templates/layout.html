@@ -32,6 +32,13 @@
       {% if request.path == '/' %}<li class="active">{% else %}<li>{% endif %}<a href="/">Map</a></li>
       {% if request.path == '/import' %}<li class="active">{% else %}<li>{% endif %}<a href="/import">Import</a></li>
     </ul>
+    <ul class="nav navbar-nav navbar-right">
+      {% if user and user.is_authenticated %}
+        <li><a href="/logout">Logout</a></li>
+      {% else %}
+        <li><a href="/login">Login</a>
+      {% endif %}
+    </ul>
   </div><!-- /.navbar-collapse -->
 </nav>
 {% block content %}{% endblock %}

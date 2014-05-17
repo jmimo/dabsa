@@ -7,6 +7,7 @@ def shutdown_database(exception=None):
   shutdown_db() 
 
 import login
+import logout
 import imp0rt
 import m4p
 import ajax
