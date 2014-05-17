@@ -6,6 +6,7 @@ from flask import session, render_template
 def shutdown_database(exception=None):
   shutdown_db() 
 
+import login
 import imp0rt
 import m4p
 import ajax
