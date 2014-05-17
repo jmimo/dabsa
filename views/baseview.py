@@ -1,5 +1,6 @@
 from flask.views import View
 from flask import request, session, make_response, render_template
+from flask.ext.login import current_user
 from model import AirspaceFile
 
 class BaseView(View):
@@ -11,7 +12,11 @@ class BaseView(View):
         return render_template(self.get_template_name(), **context)
     
     def get_objects(self):
-        return {}
+        model = {}
+        if current_user.is_authenticated():
+            model['user'] = current_user
+
+        return model
 
     def dispatch_request(self):
         return self.render_template(self.get_objects())

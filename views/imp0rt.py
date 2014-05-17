@@ -1,6 +1,7 @@
 from baseview import BaseView
 from web import app
 from flask import request
+from flask.ext.login import login_required
 from database import db
 from openair import parse
 from igc import igcparse
@@ -14,6 +15,7 @@ class ImportView(BaseView):
     def get_template_name(self):
         return 'import.html'
     
+    @login_required
     def dispatch_request(self):
 
         logger = dlog.get_logger('imp0rt')
