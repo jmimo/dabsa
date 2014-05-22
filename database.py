@@ -4,6 +4,9 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 import dlog
 
+logger = dlog.get_logger('database')
+logger.info(config.SQLALCHEMY_DATABASE_URI)
+
 dbengine = create_engine(config.SQLALCHEMY_DATABASE_URI, convert_unicode=True, echo=True)
 
 db_engine_logger = dlog.get_logger('sqlalchemy.engine')

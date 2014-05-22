@@ -36,6 +36,7 @@ def parse(filename,filepointer):
     counter = 0
     previousLine = ''
     for line in rows:
+	#logger.debug(line)
         identifier = line[:2]
         bareline = line[3:].replace('\r\n','')
         if(re.match("^[A-Za-z]",identifier)):
