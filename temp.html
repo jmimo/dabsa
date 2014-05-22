@@ -1,0 +1,58 @@
+                                        
+                                        <h3 class="uppermost"><span id="swissgrid_title">Swiss Grid / CH1903</span> <span class="reference_link">[<span id="swissgrid_wikipedia_link"><a href="http://en.wikipedia.org/wiki/Swiss_coordinate_system">Wikipedia</a></span>]</span></h3>
+                                        
+                                                <input class="swissgrid_field" name="swissgrid_x" value="" id="swissgrid_x" onchange="updateFromSwissgrid();" onkeypress="JavaScript:handleCoordKeyPress(event);" type="text"> / 
+                                                <input class="swissgrid_field" name="swissgrid_y" value="" id="swissgrid_y" onchange="updateFromSwissgrid();" onkeypress="JavaScript:handleCoordKeyPress(event);" type="text">
+                                                <br>
+        
+                                                <span class="example_text" id="swissgrid_example">E.g.: 683 285 / 247 491</span>
+        
+                                        
+        
+                                        <h3><span id="wgs84_title">Geogr. Coordinates <span class="ref_type">(WGS84)</span></span> <span class="reference_link">[<span id="wgs84_wikipedia_link"><a href="http://en.wikipedia.org/wiki/Geographic_coordinate_system">Wikipedia</a></span>]</span></h3>
+                                        
+                                        <h4 id="wgs84_sexagesimal_title">Degrees, minutes, seconds (sexagesimal)</h4>
+                                        
+                                                Lat: <input class="wgs_field" name="wgs84_sexagesimal_lat" value="" id="wgs84_sexagesimal_lat" onchange="updateFromWgs84Sexagesimal();" onkeypress="JavaScript:handleCoordKeyPress(event);" type="text">
+                                                Lng: <input class="wgs_field" name="wgs84_sexagesimal_lng" value="" id="wgs84_sexagesimal_lng" onchange="updateFromWgs84Sexagesimal();" onkeypress="JavaScript:handleCoordKeyPress(event);" type="text"><br>
+        
+                                                <span class="example_text" id="wgs84_sexagesimal_example">E.g.: N 47° 22' 23", E 8° 32' 29"</span>
+        
+                                        
+        
+                                        <h4 id="wgs84_decimal_title">Degree decimal</h4>
+                                        
+                                                Lat: <input class="wgs_field" name="wgs84_decimal_lat" value="" id="wgs84_decimal_lat" onchange="updateFromWgs84();" onkeypress="JavaScript:handleCoordKeyPress(event);" type="text"> 
+                                                Lng: <input class="wgs_field" name="wgs84_decimal_lng" value="" id="wgs84_decimal_lng" onchange="updateFromWgs84();" onkeypress="JavaScript:handleCoordKeyPress(event);" type="text"><br>
+        
+                                                <span class="example_text" id="wgs84_decimal_example">E.g.: N 47.37299, E 8.54137</span>
+        
+                                        
+        
+                                        <h4 id="wgs84_nautic_title">Degrees, minutes decimal (nautic)</h4>
+                                        
+                                                Lat: <input class="wgs_field" name="wgs84_nautic_lat" value="" id="wgs84_nautic_lat" onchange="updateFromWgs84Nautic();" onkeypress="JavaScript:handleCoordKeyPress(event);" type="text">
+                                                Lng: <input class="wgs_field" name="wgs84_nautic_lng" value="" id="wgs84_nautic_lng" onchange="updateFromWgs84Nautic();" onkeypress="JavaScript:handleCoordKeyPress(event);" type="text"><br>
+        
+                                                <span class="example_text" id="wgs84_nautic_example">E.g.: N 047° 22.379', E 008° 32.482'</span>
+        
+                                        
+        
+                                        <h3><span id="utm_title">UTM <span class="ref_type">(WGS84)</span></span> <span class="reference_link">[<span id="utm_wikipedia_link"><a href="http://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system">Wikipedia</a></span>]</span></h3>
+                                        
+                                                Z: <input class="utm_field_small" name="utm_zone" value="" id="utm_zone" onchange="updateFromUtm();" onkeypress="JavaScript:handleCoordKeyPress(event);" type="text">
+                                                E: <input class="utm_field" name="utm_east" value="" id="utm_east" onchange="updateFromUtm();" onkeypress="JavaScript:handleCoordKeyPress(event);" type="text">
+                                                N: <input class="utm_field" name="utm_north" value="" id="utm_north" onchange="updateFromUtm();" onkeypress="JavaScript:handleCoordKeyPress(event);" type="text"><br>
+        
+                                                <span class="example_text" id="utm_example">E.g.: 32 T, E 465376, N 5246717</span>
+        
+                                        
+        
+                                        <h3><span id="gk_title">Gauss-Krüger <span class="ref_type">(DHDN/Bessel)</span></span> <span class="reference_link">[<span id="gk_wikipedia_link"><a href="http://en.wikipedia.org/wiki/Gauss%E2%80%93Kr%C3%BCger_coordinate_system">Wikipedia</a></span>]</span></h3>
+                                        
+                                                Rechts: <input class="utm_field" name="gk_right" value="" id="gk_right" size="10" onchange="updateFromGk();" onkeypress="JavaScript:handleCoordKeyPress(event);" type="text">
+                                                Hoch: <input class="utm_field" name="gk_up" value="" id="gk_up" size="10" onchange="updateFromGk();" onkeypress="JavaScript:handleCoordKeyPress(event);" type="text"><br>
+         
+                                                <span class="example_text" id="gk_example">E.g.: Rechts 3465439, Hoch 5248376</span>
+        
+                                
