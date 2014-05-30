@@ -97,10 +97,20 @@ class Track(Base):
     __tablename__ = "Track"
     id = Column(Integer, primary_key=True)
     name = Column(String(512))
+    auxiliary_name = Column(String(2048))
+    description = Column(String(4096))
     pilot = Column(String(512))
     glider = Column(String(512))
     importDate = Column(DateTime)
     points = relationship('TrackPoint', backref='track') 
+
+    @property
+    def short_description(self):
+        if self.description:
+            if len(self.description) > 100:
+                return ''.join([self.description[:100], '...'])
+            return self.description
+        return ''
 
     @property
     def serialize(self):

@@ -3,14 +3,10 @@
 <div class="padded">
 <div class="row">
   <div class="col-lg-6">
-    <form class="form-inline" method="POST" enctype="multipart/form-data" action="/import">
+    <form class="form-inline" method="POST" enctype="multipart/form-data" action="/import/airspace">
     <div class="form-group">
         <label for="airspacefile">Flyland OpenAir File</label>
         <input type="file" id="airspacefile" name="airspace"/>
-    </div>
-    <div class="form-group">
-        <label for="airspacefile">IGC Track</label>
-        <input type="file" id="trackfile" name="track"/>
     </div>
     <button type="submit" class="btn btn-default">import</button>
   </div>
@@ -31,26 +27,6 @@
           <td>{{ loop.index }}</td>
           <td>{{ file.name }}</td>
           <td>{{ file.importDate }}</td>
-        </tr>
-      {% endfor %}
-      </tbody>
-    </table>
-  {% endif %}
-  {% if tracks %}
-    <table class="table table-bordered">
-      <thead>
-      <tr>
-        <th>#</th>
-        <th>Track Name</th>
-        <th>Import Date</th>
-      </tr>
-      </thead>
-      <tbody>
-      {% for track in tracks %}
-        <tr>
-          <td>{{ loop.index }}</td>
-          <td>{{ track.name }}</td>
-          <td>{{ track.importDate }}</td>
         </tr>
       {% endfor %}
       </tbody>

@@ -8,6 +8,7 @@ def shutdown_database(exception=None):
 
 import login
 import logout
-import imp0rt
+import airspace_import
+import flight_import
 import m4p
 import ajax
