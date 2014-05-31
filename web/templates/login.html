@@ -5,21 +5,18 @@
     <h2>Login to DABSA</h2>
     <div class="control-group">
         <div class="controls">
-          <input type="text" id="username" name="username" class="input-xlarge"
-            placeholder="Enter Username" required>
+          {{ form.username(placeholder='Enter Username') }}
         </div>
     </div>
  
     <div class="control-group">
         <div class="controls">
-          <input type="password" id="password" name="password" class="input-xlarge"
-            placeholder="Enter Password" required>
+          {{ form.password(placeholder='Enter Password') }}
         </div>
     </div>
- 
     <div class="control-group">
         <div class="controls">
-          <button type="submit" class="btn btn-success">Signin</button>
+          <button type="submit" class="btn btn-success">Sign-in</button>
         </div>
     </div>
   </form>

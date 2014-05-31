@@ -9,8 +9,10 @@ from datetime import datetime
 from model import AirspaceFile, Track
 import dlog
 
-class ImportView(BaseView):
+class AirspaceImportView(BaseView):
     methods = ['GET', 'POST']
+
+    logger = dlog.get_logger('airspace-import')
 
     def get_template_name(self):
         return 'airspace_import.html'
@@ -41,4 +43,4 @@ class ImportView(BaseView):
         return self.render_template(model)
 
 
-app.add_url_rule('/import/airspace', view_func=ImportView.as_view('airspaceimportview'))
+app.add_url_rule('/import/airspace', view_func=AirspaceImportView.as_view('airspaceimportview'))
