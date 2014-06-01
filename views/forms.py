@@ -8,6 +8,7 @@ class AirspaceFileUploadForm(Form):
     file = FileField('file', [validators.InputRequired(message='Please specify a valid file path')])
 
 class FlightUploadForm(Form):
-    file = FileField('file', [validators.required()])
-    name = StringField('name', [validators.optional(), validators.Length(max=512)])
-    description = TextAreaField('description', [validators.optional(), validators.Length(max=4096)]) 
+    file = FileField('file')
+    name = StringField('name', [validators.optional(), validators.Length(max=512, message='Maximum length cannot exceed 512 characters')])
+    description = TextAreaField('description', [validators.optional(), validators.Length(max=4096, message='Maximum length cannot exceed 4096 characters')]) 
+

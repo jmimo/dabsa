@@ -21,20 +21,31 @@ class FlightImportView(BaseView):
     @login_required
     def dispatch_request(self):
         model = self.get_objects()
-        form = FlightUploadForm(request.form)
+        form = FlightUploadForm(request=request, form=request.form)
         model['form'] = form
         if request.method == 'POST' and form.validate():
-            track_file = request.files['file']
-            track = igcparse(track_file.filename, track_file, datetime.now())
-            track.auxiliary_name = form.name.data
-            track.description = form.description.data
-            try:
-                db.add(track)
-                db.commit()
-            except Exception as e:
-                self.logger.error(e.message)
-                self.logger.info(e)
-                raise
+            track_file = request.files[form.file.name]
+            if track_file == None or track_file.filename == None:
+                form.file.errors.append('Please specify a valid file to be uploaded')
+            else:
+                track = None
+                try:
+                    track = igcparse(track_file.filename, track_file, datetime.now())
+                    if form.name.data:
+                        track.auxiliary_name = form.name.data
+                    if form.description.data:
+                        track.description = form.description.data
+                    try:
+                        db.add(track)
+                        db.commit()
+                    except Exception as e:
+                        self.logger.error(e.message)
+                        self.logger.info(e)
+                        form.file.errors.append('Unable to store flight from file')
+                except SyntaxError as e:
+                    self.logger.error(e.message)
+                    self.logger.info(e)
+                    form.file.errors.append('Unable to validate file due to: %s' % e.message)
 
         model['tracks'] = Track.query.all()
         return self.render_template(model)

@@ -101,8 +101,13 @@ class Track(Base):
     description = Column(String(4096))
     pilot = Column(String(512))
     glider = Column(String(512))
+    date = Column(DateTime)
     importDate = Column(DateTime)
     points = relationship('TrackPoint', backref='track') 
+
+    @property
+    def aux_name(self):
+        return (self.auxiliary_name if self.auxiliary_name != None else '')
 
     @property
     def short_description(self):
@@ -117,9 +122,12 @@ class Track(Base):
         return {
             'id': str(self.id),
             'name': self.name,
+            'auxiliary_name': self.auxiliary_name,
+            'description': self.description,
             'pilot': self.pilot,
             'glider': self.glider,
-            'trackDate': (self.importDate.strftime("%Y-%n-%d %H:%M:%S") if self.importDate != None else None),
+            'trackDate': (self.date.strftime("%Y-%n-%d %H:%M:%S") if self.date != None else None),
+            'importDate': (self.importDate.strftime("%Y-%n-%d %H:%M:%S") if self.importDate != None else None),
             'trackpoints': [point.serialize for point in self.points]
         }
 

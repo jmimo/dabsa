@@ -3,7 +3,7 @@
 <div class="padded">
 <div class="row">
   <div class="col-lg-6" style="padding: 15px">
-    <button class="btn btn-primary" data-toggle="modal" data-target="#uploadform">Import</button>
+    <button class="btn btn-primary" id="formbutton_flight_upload" data-toggle="modal" data-target="#uploadform">Import</button>
   </div>
 </div>
 <div class="row">
@@ -23,7 +23,7 @@
       {% for track in tracks %}
         <tr>
           <td>{{ loop.index }}</td>
-          <td>{{ track.auxiliary_name }}</td>
+          <td>{{ track.aux_name }}</td>
           <td>{{ track.name }}</td>
           <td>{{ track.short_description }}</td>
           <td>{{ track.importDate }}</td>
@@ -40,6 +40,17 @@
     <div class="modal-content">
       <div class="modal-header">
         <h4 class="modal-title" id="FlightUpload">Import Flight</h4>
+        {% if form.errors %}
+        <div class="help-block">
+          <ul class="errors">
+            {% for field_name, field_errors in form.errors|dictsort if field_errors %}
+              {% for error in field_errors %}
+                <li>{{ form[field_name].label }}: {{ error }}</li>
+              {% endfor %}
+            {% endfor %}
+          </ul>
+        </div>
+       {% endif %}
       </div>
       <div class="modal-body">
         {% from "_formhelpers.html" import render_field %}
@@ -53,4 +64,18 @@
     </div>
   </div>
 </div>
+{% endblock %}
+{% block script %}
+<!-- <script type="text/javascript">
+  $("#formbutton_flight_upload").click(function() {
+    
+  });
+</script> -->
+{% if form.errors %}
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $("#formbutton_flight_upload").click();
+    });
+  </script>
+{% endif %}
 {% endblock %}
